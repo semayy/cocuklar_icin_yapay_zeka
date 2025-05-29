@@ -411,7 +411,23 @@
                     </h1>
                 </div>
                 
-                <div class="w-full max-w-md mx-auto mb-8 relative">
+                <div id="initial-intro-screen" class="w-full max-w-md mx-auto mb-8 relative text-center">
+                    <p class="text-cyan-300 text-center mb-6 text-lg" data-lang-key="intro_message">
+                        Çocuklar, ebeveynlerinizle birlikte misiniz? Eğer size eşlik edecek bir yetişkin varsa, haydi başlayalım!
+                    </p>
+                    <button 
+                        id="continue-intro-btn" 
+                        class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg px-8 py-3 font-medium shadow-sm hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center justify-center mx-auto"
+                        data-lang-key="continue_button"
+                    >
+                        DEVAM ET
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4-4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="name-input-section" class="w-full max-w-md mx-auto mb-8 relative hidden">
                     <div class="floating mb-8">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40 mx-auto">
                             <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
@@ -556,6 +572,14 @@
                                 <div class="flex-grow overflow-auto pr-2">
                                     <p id="card-back-text" class="text-purple-100">
                                         </p>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <button id="btn-listen-story" class="btn-nav bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg px-5 py-2 font-medium shadow-sm hover:from-blue-700 hover:to-indigo-700 tech-font">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.616 16.894a1 1 0 01-1.396.064 6.002 6.002 0 000-8.512 1 1 0 011.414-1.414 8.002 8.002 0 010 11.339z" clip-rule="evenodd" />
+                                        </svg>
+                                        <span data-lang-key="listen_story_button">DİNLE</span>
+                                    </button>
                                 </div>
                                 <div class="mt-4 text-center">
                                     <span class="inline-block bg-cyan-900 text-cyan-300 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2 tech-font">#YapayZeka</span>
@@ -767,6 +791,22 @@
             </div>
 
         </div>
+        <footer class="mt-12 p-6 bg-slate-900 bg-opacity-90 rounded-3xl text-slate-400 text-center text-sm tech-font shadow-xl border border-slate-700">
+            <h3 class="text-lg font-bold text-cyan-300 mb-2" data-lang-key="about_title">Hakkında</h3>
+            <p class="mb-4" data-lang-key="about_text">
+                Bu sayfada yer alan bilgiler, kaynak gösterilen içeriklerden derlenmiştir. Sertifikanın yasal bir geçerliliği yoktur, sadece eğitim amacıyla ve kar gütmeden hazırlanmıştır.
+            </p>
+            <h3 class="text-lg font-bold text-cyan-300 mb-2" data-lang-key="contact_title">İletişim</h3>
+            <p class="mb-2">
+                <span data-lang-key="contact_message">Sorularınız veya geri bildirimleriniz için LinkedIn üzerinden iletişime geçebilirsiniz:</span>
+            </p>
+            <p class="mb-4">
+                <a href="https://www.linkedin.com/in/semayy" target="_blank" class="text-blue-400 hover:underline">linkedin.com/in/semayy</a>
+            </p>
+            <p class="font-bold text-cyan-300">Semanur Ayyıldız</p>
+            <p class="text-xs text-slate-500">Görsel İletişim Tasarımı ve Dijital Dönüşüm Uzmanı</p>
+            <p class="mt-4 text-xs text-slate-500">© 2025 <span data-lang-key="all_rights_reserved">Tüm Hakları Saklıdır. Bu içerik eğitim amaçlıdır.</span></p>
+        </footer>
     </div>
 
     <div id="riddle-screen" class="max-w-5xl mx-auto hidden">
@@ -894,1186 +934,1297 @@
     </div>
 
     <script>
-        // DOM element references
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const riddleScreen = document.getElementById('riddle-screen');
-        const matchingGameScreen = document.getElementById('matching-game-screen');
-        const certificateScreen = document.getElementById('certificate-screen');
+        // Text-to-Speech API (can be outside DOMContentLoaded)
+        const synth = window.speechSynthesis;
+        let speechUtterance = null;
 
-        const startAdventureBtn = document.getElementById('start-adventure');
-        const userNameInput = document.getElementById('user-name');
-        const userNameDisplay = document.getElementById('user-name-display');
-        const certificateUserName = document.getElementById('certificate-user-name');
-        const certificateDate = document.getElementById('certificate-date');
-        const certificateMessage = document.getElementById('certificate-message');
+        // Click Sound (simple beep as data URI) (can be outside DOMContentLoaded)
+        const clickSound = new Audio('data:audio/wav;base64,UklGRyQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAkBAAAAAQ=='); // A very short, subtle beep
 
-        // Language Toggle
-        const langToggleTr = document.getElementById('lang-toggle-tr');
-        const langToggleEn = document.getElementById('lang-toggle-en');
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM element references
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const gameScreen = document.getElementById('game-screen');
+            const riddleScreen = document.getElementById('riddle-screen');
+            const matchingGameScreen = document.getElementById('matching-game-screen');
+            const certificateScreen = document.getElementById('certificate-screen');
 
-        // Learning Card elements
-        const currentCardElement = document.getElementById('current-card');
-        const cardFrontTitle = document.getElementById('card-front-title');
-        const cardFrontText = document.getElementById('card-front-text');
-        const cardFrontSvg = document.getElementById('card-front-svg');
-        const cardBackTitle = document.getElementById('card-back-title');
-        const cardBackText = document.getElementById('card-back-text');
-        const cardBadge = document.getElementById('card-badge');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-        const btnKnown = document.getElementById('btn-known');
-        const btnUnknown = document.getElementById('btn-unknown');
+            // New intro elements
+            const initialIntroScreen = document.getElementById('initial-intro-screen');
+            const continueIntroBtn = document.getElementById('continue-intro-btn');
+            const nameInputSection = document.getElementById('name-input-section'); // The original section with name input
 
-        // Ask Robi elements
-        const robiQuestionInput = document.getElementById('robi-question-input');
-        const askRobiBtn = document.getElementById('ask-robi-btn');
-        const robiAnswer = document.getElementById('robi-answer');
-        const robiLoadingIndicator = document.getElementById('robi-loading-indicator');
+            const startAdventureBtn = document.getElementById('start-adventure');
+            const userNameInput = document.getElementById('user-name');
+            const userNameDisplay = document.getElementById('user-name-display');
+            const certificateUserName = document.getElementById('certificate-user-name');
+            const certificateDate = document.getElementById('certificate-date');
+            const certificateMessage = document.getElementById('certificate-message');
 
-        // AI Story Generator elements
-        const storyKeywordsInput = document.getElementById('story-keywords-input');
-        const generateStoryBtn = document.getElementById('generate-story-btn');
-        const storyText = document.getElementById('story-text');
-        const storyLoadingIndicator = document.getElementById('story-loading-indicator');
+            // Language Toggle
+            const langToggleTr = document.getElementById('lang-toggle-tr');
+            const langToggleEn = document.getElementById('lang-toggle-en');
 
-        // "What Does This AI Do?" Scenario Generator elements
-        const scenarioInput = document.getElementById('scenario-input');
-        const analyzeScenarioBtn = document.getElementById('analyze-scenario-btn');
-        const scenarioAnalysisText = document.getElementById('scenario-analysis-text');
-        const scenarioLoadingIndicator = document.getElementById('scenario-loading-indicator');
+            // Learning Card elements
+            const currentCardElement = document.getElementById('current-card');
+            const cardFrontTitle = document.getElementById('card-front-title');
+            const cardFrontText = document.getElementById('card-front-text');
+            const cardFrontSvg = document.getElementById('card-front-svg');
+            const cardBackTitle = document.getElementById('card-back-title');
+            const cardBackText = document.getElementById('card-back-text');
+            const cardBadge = document.getElementById('card-badge');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const btnKnown = document.getElementById('btn-known');
+            const btnUnknown = document.getElementById('btn-unknown');
+            const btnListenStory = document.getElementById('btn-listen-story'); // New: Listen Story button
 
-        // New: AI Fun Fact Generator elements
-        const generateFunFactBtn = document.getElementById('generate-fun-fact-btn');
-        const funFactText = document.getElementById('fun-fact-text');
-        const funFactLoadingIndicator = document.getElementById('fun-fact-loading-indicator');
+            // Ask Robi elements
+            const robiQuestionInput = document.getElementById('robi-question-input');
+            const askRobiBtn = document.getElementById('ask-robi-btn');
+            const robiAnswer = document.getElementById('robi-answer');
+            const robiLoadingIndicator = document.getElementById('robi-loading-indicator');
 
-        // New: AI Invention Idea Generator elements
-        const inventionTopicInput = document.getElementById('invention-topic-input');
-        const generateInventionBtn = document.getElementById('generate-invention-btn');
-        const inventionText = document.getElementById('invention-text');
-        const inventionLoadingIndicator = document.getElementById('invention-loading-indicator');
+            // AI Story Generator elements
+            const storyKeywordsInput = document.getElementById('story-keywords-input');
+            const generateStoryBtn = document.getElementById('generate-story-btn');
+            const storyText = document.getElementById('story-text');
+            const storyLoadingIndicator = document.getElementById('story-loading-indicator');
 
-        // Riddle elements
-        const riddleQuestion = document.getElementById('riddle-question');
-        const riddleAnswerInput = document.getElementById('riddle-answer-input');
-        const submitRiddleAnswerBtn = document.getElementById('submit-riddle-answer');
-        const riddleFeedback = document.getElementById('riddle-feedback');
-        const btnPrevRiddle = document.getElementById('btn-prev-riddle');
-        const btnNextRiddle = document.getElementById('btn-next-riddle');
-        const riddleCountDisplay = document.getElementById('riddle-count');
-        const riddleLoadingIndicator = document.getElementById('riddle-loading-indicator');
+            // "What Does This AI Do?" Scenario Generator elements
+            const scenarioInput = document.getElementById('scenario-input');
+            const analyzeScenarioBtn = document.getElementById('analyze-scenario-btn');
+            const scenarioAnalysisText = document.getElementById('scenario-analysis-text');
+            const scenarioLoadingIndicator = document.getElementById('scenario-loading-indicator');
 
-        // Matching Game elements
-        const matchingGrid = document.getElementById('matching-grid');
-        const matchingFeedback = document.getElementById('matching-feedback');
-        const btnResetMatching = document.getElementById('btn-reset-matching');
-        const btnCompleteMatching = document.getElementById('btn-complete-matching');
+            // AI Fun Fact Generator elements
+            const generateFunFactBtn = document.getElementById('generate-fun-fact-btn');
+            const funFactText = document.getElementById('fun-fact-text');
+            const funFactLoadingIndicator = document.getElementById('fun-fact-loading-indicator');
 
-        // Overall progress elements
-        const overallProgressCountDisplay = document.getElementById('overall-progress-count');
-        const overallTotalCountDisplay = document.getElementById('overall-total-count');
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-        const statsKnown = document.getElementById('stats-known');
-        const statsUnknown = document.getElementById('stats-unknown');
-        const statsRemaining = document.getElementById('stats-remaining');
-        const btnReset = document.getElementById('btn-reset');
-        // Removed: const btnComplete = document.getElementById('btn-complete'); 
+            // AI Invention Idea Generator elements
+            const inventionTopicInput = document.getElementById('invention-topic-input');
+            const generateInventionBtn = document.getElementById('generate-invention-btn');
+            const inventionText = document.getElementById('invention-text');
+            const inventionLoadingIndicator = document.getElementById('invention-loading-indicator');
 
-        const starsContainer = document.getElementById('stars');
+            // Riddle elements
+            const riddleQuestion = document.getElementById('riddle-question');
+            const riddleAnswerInput = document.getElementById('riddle-answer-input');
+            const submitRiddleAnswerBtn = document.getElementById('submit-riddle-answer');
+            const riddleFeedback = document.getElementById('riddle-feedback');
+            const btnPrevRiddle = document.getElementById('btn-prev-riddle');
+            const btnNextRiddle = document.getElementById('btn-next-riddle');
+            const riddleCountDisplay = document.getElementById('riddle-count');
+            const riddleLoadingIndicator = document.getElementById('riddle-loading-indicator');
 
-        // Game state variables
-        let userName = '';
-        let currentSection = 'learning'; // 'learning', 'riddles', 'matching'
-        let currentCardIndex = 0;
-        let currentRiddleIndex = 0;
-        let currentLanguage = 'tr'; // Default language
+            // Matching Game elements
+            const matchingGrid = document.getElementById('matching-grid');
+            const matchingFeedback = document.getElementById('matching-feedback');
+            const btnResetMatching = document.getElementById('btn-reset-matching');
+            const btnCompleteMatching = document.getElementById('btn-complete-matching');
 
-        let knownCards = new Set(); // Stores indices of learning cards marked as "Anladım"
-        let unknownCards = new Set(); // Stores indices of learning cards marked as "Tekrar"
-        let solvedRiddles = new Set(); // Stores indices of solved riddles
-        let matchedPairs = new Set(); // Stores IDs of matched pairs in matching game
+            // Overall progress elements
+            const overallProgressCountDisplay = document.getElementById('overall-progress-count');
+            const overallTotalCountDisplay = document.getElementById('overall-total-count');
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercent = document.getElementById('progress-percent');
+            const statsKnown = document.getElementById('stats-known');
+            const statsUnknown = document.getElementById('stats-unknown');
+            const statsRemaining = document.getElementById('stats-remaining');
+            const btnReset = document.getElementById('btn-reset');
+            
+            const starsContainer = document.getElementById('stars');
 
-        // Matching game specific state
-        let flippedCards = [];
-        let lockBoard = false;
+            // Certificate screen buttons
+            const btnBackToGame = document.getElementById('btn-back-to-game');
+            const btnPrintCertificate = document.getElementById('btn-print-certificate');
 
-        // Translations object
-        const translations = {
-            'tr': {
-                'welcome_title': 'YAPAY ZEKA MACERASI',
-                'welcome_intro': 'Merhaba genç kaşif! Yapay zeka dünyasına heyecan verici bir yolculuğa çıkmaya hazır mısın?',
-                'enter_name': 'İSMİNİ GİR:',
-                'name_placeholder': 'Adın ve Soyadın',
-                'start_button': 'BAŞLA',
-                'name_hint': '* İsmin sertifikanda görünecek',
-                'learn_title': 'ÖĞREN',
-                'learn_text': 'Yapay zeka hakkında eğlenceli hikayeler ve açıklamalarla yeni bilgiler öğren.',
-                'explore_title': 'KEŞFET',
-                'explore_text': 'Robotlar ve yapay zeka dünyasını interaktif kartlarla keşfet.',
-                'certificate_title': 'SERTİFİKA',
-                'certificate_text': 'Tüm kartları tamamla ve kendi özel yapay zeka sertifikanı kazan!',
-                'hello_explorer': 'Merhaba',
-                'ready_to_explore': '! Yapay zeka dünyasını keşfetmeye hazır mısın?',
-                'progress': 'İLERLEME',
-                'progress_bar_label': 'İLERLEME ÇUBUĞU',
-                'child_friendly': 'ÇOCUK DOSTU',
-                'concept': 'KAVRAM',
-                'flip_card_hint': 'HİKAYEYİ OKUMAK İÇİN KARTI ÇEVİR',
-                'prev_button': 'ÖNCEKİ',
-                'next_button': 'SONRAKİ',
-                'understood_button': 'ANLADIM',
-                'repeat_button': 'TEKRAR',
-                'learning_stats': 'ÖĞRENME İSTATİSTİKLERİ',
-                'total_cards': 'TOPLAM KART',
-                'understood': 'ANLAŞILAN',
-                'to_repeat': 'TEKRAR EDİLECEK',
-                'remaining': 'KALAN',
-                'reset_button': 'SIFIRLA',
-                'ask_robi_title': '✨ Robi\'ye Soru Sor',
-                'ask_robi_prompt': 'Yapay zeka hakkında bir soru sor:',
-                'ask_robi_placeholder': 'Örn: Robotlar rüya görür mü?',
-                'ask_robi_button': 'SOR ✨',
-                'robi_thinking': 'Robi düşünüyor...',
-                'robi_answer_placeholder': 'Robi\'nin cevabını bekliyorum...',
-                'robi_no_question': 'Lütfen bir soru yaz!',
-                'robi_api_error': 'Üzgünüm, şu an cevap veremiyorum. Daha sonra tekrar dene.',
-                'ai_story_generator_title': '✨ Yapay Zeka Hikaye Oluşturucu',
-                'story_keywords_prompt': 'Hikayende hangi anahtar kelimeler olsun? (virgülle ayır)',
-                'story_keywords_placeholder': 'Örn: robot, uzay, arkadaşlık',
-                'generate_story_button': 'HİKAYE OLUŞTUR ✨',
-                'story_placeholder': 'Hikayen burada belirecek...',
-                'story_no_keywords': 'Lütfen hikaye oluşturmak için anahtar kelimeler girin!',
-                'story_loading': 'Hikaye oluşturuluyor...',
-                'story_api_error': 'Hikaye oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
-                'ai_scenario_title': '✨ Yapay Zeka Ne Yapar?',
-                'scenario_prompt': 'Bir senaryo yaz:',
-                'scenario_placeholder': 'Örn: Bir robot hastanede',
-                'analyze_scenario_button': 'ANALİZ ET ✨',
-                'scenario_analysis_placeholder': 'Yapay zeka bu senaryoda ne yapabilir?',
-                'scenario_no_input': 'Lütfen bir senaryo yazın!',
-                'scenario_loading': 'Senaryo analiz ediliyor...',
-                'scenario_api_error': 'Senaryo analiz edilirken bir hata oluştu. Lütfen tekrar dene.',
-                'ai_fun_fact_title': '✨ Yapay Zeka Eğlenceli Bilgi',
-                'generate_fun_fact_button': 'EĞLENCELİ BİLGİ OLUŞTUR ✨',
-                'fun_fact_placeholder': 'Yapay zeka hakkında eğlenceli bir bilgi burada belirecek...',
-                'fun_fact_loading': 'Eğlenceli bilgi oluşturuluyor...',
-                'fun_fact_api_error': 'Eğlenceli bilgi oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
-                'ai_invention_title': '✨ Yapay Zeka İcat Fikri',
-                'invention_topic_prompt': 'Hangi konuda icat fikri istersin?',
-                'invention_topic_placeholder': 'Örn: evcil hayvanlar, çevre, oyunlar',
-                'generate_invention_button': 'İCAT FİKRİ OLUŞTUR ✨',
-                'invention_placeholder': 'Yapay zeka icat fikrin burada belirecek...',
-                'invention_loading': 'İcat fikri oluşturuluyor...',
-                'invention_no_topic': 'Lütfen bir icat konusu girin!',
-                'invention_api_error': 'İcat fikri oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
-                'riddle_title': 'YAPAY ZEKA BİLMECELERİ',
-                'riddle_intro': 'Yapay zeka bilginizi test etme zamanı! Aşağıdaki bilmeceyi çözebilir misin?',
-                'riddle_input_placeholder': 'Cevabını buraya yaz...',
-                'answer_button': 'CEVAPLA',
-                'riddle_correct': 'Doğru! Harikasın!',
-                'riddle_incorrect': 'Yanlış cevap. Tekrar dene!',
-                'riddle_loading': 'Bilmeceler yükleniyor...',
-                'riddle_load_error': 'Bilmeceler yüklenemedi. Lütfen tekrar deneyin.',
-                'riddle_api_error': 'Bilmeceler yüklenirken bir hata oluştu.',
-                'riddle_count_label': 'BİLMECE',
-                'proceed_to_matching': 'EŞLEŞTİRME OYUNUNA GEÇ',
-                'matching_game_title': 'EŞLEŞTİRME OYUNU',
-                'matching_game_intro': 'Kartları çevir ve aynı kavramları eşleştir!',
-                'matching_matched': 'Eşleşti!',
-                'matching_not_matched': 'Eşleşmedi, tekrar dene!',
-                'matching_all_matched': 'Tebrikler! Tüm çiftleri eşleştirdin!',
-                'reset_matching_button': 'YENİDEN BAŞLA',
-                'get_certificate_button': 'SERTİFİKANI AL!',
-                'certificate_main_title': 'YAPAY ZEKADA UZMANLIK SERTİFİKASI',
-                'certificate_honored': 'Bu sertifika ile onurlandırılmıştır:',
-                'certificate_completion_text': 'Yapay zeka macera derslerini başarıyla tamamladığı için.',
-                'congratulations': 'Tebrikler!',
-                'date_issued': 'Veriliş Tarihi:',
-                'back_to_game': 'GERİ DÖN',
-                'print_certificate': 'YAZDIR',
-                'certificate_message_loading': 'Mesajınız oluşturuluyor...',
-                'certificate_message_default': 'Tebrikler! Yapay zeka maceranı başarıyla tamamladın!',
-                'confirm_reset': 'Tüm ilerlemenizi sıfırlamak istediğinizden emin misiniz?'
-            },
-            'en': {
-                'welcome_title': 'AI ADVENTURE',
-                'welcome_intro': 'Hello young explorer! Are you ready for an exciting journey into the world of artificial intelligence?',
-                'enter_name': 'ENTER YOUR NAME:',
-                'name_placeholder': 'Your Name and Surname',
-                'start_button': 'START',
-                'name_hint': '* Your name will appear on your certificate',
-                'learn_title': 'LEARN',
-                'learn_text': 'Learn new things about artificial intelligence with fun stories and explanations.',
-                'explore_title': 'EXPLORE',
-                'explore_text': 'Explore the world of robots and artificial intelligence with interactive cards.',
-                'certificate_title': 'CERTIFICATE',
-                'certificate_text': 'Complete all cards and earn your special AI certificate!',
-                'hello_explorer': 'Hello',
-                'ready_to_explore': '! Are you ready to explore the world of artificial intelligence?',
-                'progress': 'PROGRESS',
-                'progress_bar_label': 'PROGRESS BAR',
-                'child_friendly': 'CHILD FRIENDLY',
-                'concept': 'CONCEPT',
-                'flip_card_hint': 'FLIP THE CARD TO READ THE STORY',
-                'prev_button': 'PREVIOUS',
-                'next_button': 'NEXT',
-                'understood_button': 'UNDERSTOOD',
-                'repeat_button': 'REPEAT',
-                'learning_stats': 'LEARNING STATISTICS',
-                'total_cards': 'TOTAL CARDS',
-                'understood': 'UNDERSTOOD',
-                'to_repeat': 'TO REPEAT',
-                'remaining': 'REMAINING',
-                'reset_button': 'RESET',
-                'ask_robi_title': '✨ Ask Robi',
-                'ask_robi_prompt': 'Ask a question about artificial intelligence:',
-                'ask_robi_placeholder': 'Ex: Do robots dream?',
-                'ask_robi_button': 'ASK ✨',
-                'robi_thinking': 'Robi is thinking...',
-                'robi_answer_placeholder': 'Waiting for Robi\'s answer...',
-                'robi_no_question': 'Please write a question!',
-                'robi_api_error': 'Sorry, I cannot answer right now. Please try again later.',
-                'ai_story_generator_title': '✨ AI Story Generator',
-                'story_keywords_prompt': 'What keywords should be in your story? (separate with commas)',
-                'story_keywords_placeholder': 'Ex: robot, space, friendship',
-                'generate_story_button': 'GENERATE STORY ✨',
-                'story_placeholder': 'Your story will appear here...',
-                'story_no_keywords': 'Please enter keywords to generate a story!',
-                'story_loading': 'Generating story...',
-                'story_api_error': 'An error occurred while generating the story. Please try again.',
-                'ai_scenario_title': '✨ What Does This AI Do?',
-                'scenario_prompt': 'Write a scenario:',
-                'scenario_placeholder': 'Ex: A robot in a hospital',
-                'analyze_scenario_button': 'ANALYZEN ✨',
-                'scenario_analysis_placeholder': 'What can AI do in this scenario?',
-                'scenario_no_input': 'Please write a scenario!',
-                'scenario_loading': 'Analyzing scenario...',
-                'scenario_api_error': 'An error occurred while analyzing the scenario. Please try again.',
-                'ai_fun_fact_title': '✨ AI Fun Fact',
-                'generate_fun_fact_button': 'GENERATE FUN FACT ✨',
-                'fun_fact_placeholder': 'A fun fact about AI will appear here...',
-                'fun_fact_loading': 'Generating fun fact...',
-                'fun_fact_api_error': 'An error occurred while generating the fun fact. Please try again.',
-                'ai_invention_title': '✨ AI Invention Idea',
-                'invention_topic_prompt': 'What topic would you like an invention idea for?',
-                'invention_topic_placeholder': 'Ex: pets, environment, games',
-                'generate_invention_button': 'GENERATE INVENTION IDEA ✨',
-                'invention_placeholder': 'Your AI invention idea will appear here...',
-                'invention_loading': 'Generating invention idea...',
-                'invention_no_topic': 'Please enter an invention topic!',
-                'invention_api_error': 'An error occurred while generating the invention idea. Please try again.',
-                'riddle_title': 'AI RIDDLES',
-                'riddle_intro': 'Time to test your AI knowledge! Can you solve the riddle below?',
-                'riddle_input_placeholder': 'Type your answer here...',
-                'answer_button': 'ANSWER',
-                'riddle_correct': 'Correct! Amazing!',
-                'riddle_incorrect': 'Wrong answer. Try again!',
-                'riddle_loading': 'Riddles are loading...',
-                'riddle_load_error': 'Could not load riddles. Please try again.',
-                'riddle_api_error': 'An error occurred while loading riddles.',
-                'riddle_count_label': 'RIDDLE',
-                'proceed_to_matching': 'PROCEED TO MATCHING GAME',
-                'matching_game_title': 'MATCHING GAME',
-                'matching_game_intro': 'Flip the cards and match the same concepts!',
-                'matching_matched': 'Matched!',
-                'matching_not_matched': 'Not matched, try again!',
-                'matching_all_matched': 'Congratulations! You matched all pairs!',
-                'reset_matching_button': 'RESTART',
-                'get_certificate_button': 'GET YOUR CERTIFICATE!',
-                'certificate_main_title': 'CERTIFICATE OF EXPERTISE IN AI',
-                'certificate_honored': 'This certificate is honored to:',
-                'certificate_completion_text': 'For successfully completing the artificial intelligence adventure lessons.',
-                'congratulations': 'Congratulations!',
-                'date_issued': 'Date Issued:',
-                'back_to_game': 'GO BACK',
-                'print_certificate': 'PRINT',
-                'certificate_message_loading': 'Generating your message...',
-                'certificate_message_default': 'Congratulations! You have successfully completed your AI adventure!',
-                'confirm_reset': 'Are you sure you want to reset all your progress?'
-            }
-        };
 
-        // AI Concepts data (learning cards)
-        const aiConcepts = [
-            {
-                title: "Yapay Zeka Nedir?",
-                text: "Merhaba! Ben Robot Robi. Yapay zeka, bilgisayarların insanlar gibi düşünmesini ve öğrenmesini sağlayan bir teknolojidir. Benim gibi robotlar, yapay zeka sayesinde seninle konuşabilir ve sorularını yanıtlayabilir.",
-                storyTitle: "Robot Robi'nin Macerası",
-                storyText: "Bir zamanlar, küçük bir robot olan Robi vardı. Robi, yapay zeka sayesinde her gün yeni şeyler öğreniyordu. Bir gün, bir çocuk ona \"2+2 kaç eder?\" diye sordu. Robi hemen \"4!\" diye cevap verdi. Sonra çocuk \"Peki, en sevdiğin renk ne?\" diye sordu. Robi düşündü ve \"Henüz bir renge karar vermedim, çünkü hala öğreniyorum!\" dedi. Yapay zeka, Robi'nin sorulara cevap vermesini ve yeni bilgiler öğrenmesini sağlıyordu. Tıpkı senin okulda öğrendiğin gibi, Robi de her gün yeni şeyler öğreniyor ve daha akıllı hale geliyordu.",
-                svg: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
-                        <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
-                        <circle cx="85" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
-                        <circle cx="115" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
-                        <path d="M85 85 Q100 100 115 85" stroke="#38bdf8" stroke-width="3" fill="none" />
-                        <rect x="60" y="110" width="80" height="60" rx="10" fill="#38bdf8" opacity="0.2" />
-                        <rect x="70" y="125" width="60" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="145" width="40" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
-                        <circle cx="70" cy="40" r="10" fill="#a855f7" opacity="0.3" />
-                        <circle cx="130" cy="40" r="10" fill="#a855f7" opacity="0.3" />
-                        <path d="M70 40 Q100 10 130 40" stroke="#a855f7" stroke-width="5" fill="none" opacity="0.3" />
-                    </svg>
-                `
-            },
-            {
-                title: "Robotlar Nasıl Öğrenir?",
-                text: "Robotlar, tıpkı senin gibi, deneyimlerden öğrenirler. Onlara ne kadar çok bilgi verirsek ve ne kadar çok pratik yaparlarsa, o kadar akıllı olurlar. Buna 'Makine Öğrenmesi' denir.",
-                storyTitle: "Akıllı Köpek Robi",
-                storyText: "Robi'nin yeni arkadaşı, bir robot köpek olan Data'ydı. Data, etraftaki eşyaları tanımayı öğreniyordu. İlk başta bir topu ve bir ayakkabıyı ayırt edemiyordu. Ama Robi ona sürekli 'Bu top, bu ayakkabı!' diye gösterdi. Data, her doğru bildiğinde 'Harika!' sesi duyuyordu. Zamanla Data, topu gördüğünde havlamayı, ayakkabıyı gördüğünde ise sessiz kalmayı öğrendi. Bu, Data'nın makine öğrenmesi sayesinde akıllanmasıydı!",
-                svg: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
-                        <path d="M100 20 C130 20, 140 50, 120 70 L120 130 C140 150, 130 180, 100 180 C70 180, 60 150, 80 130 L80 70 C60 50, 70 20, 100 20 Z" fill="#a855f7" opacity="0.2" />
-                        <circle cx="85" cy="60" r="8" fill="#a855f7" class="robot-eye" />
-                        <circle cx="115" cy="60" r="8" fill="#a855f7" class="robot-eye" />
-                        <path d="M85 85 Q100 100 115 85" stroke="#a855f7" stroke-width="3" fill="none" />
-                        <rect x="70" y="140" width="60" height="10" rx="5" fill="#a855f7" opacity="0.5" />
-                        <circle cx="70" cy="160" r="10" fill="#38bdf8" opacity="0.3" />
-                        <circle cx="130" cy="160" r="10" fill="#38bdf8" opacity="0.3" />
-                        <path d="M70 160 Q100 190 130 160" stroke="#38bdf8" stroke-width="5" fill="none" opacity="0.3" />
-                    </svg>
-                `
-            },
-            {
-                title: "Yapay Zeka Nelerde Kullanılır?",
-                text: "Yapay zeka hayatımızın birçok yerinde var! Akıllı telefonlarımızda, oyunlarda, hatta arabalarda bile bize yardımcı oluyor. Örneğin, seni doğru yere götüren navigasyon uygulamaları yapay zeka kullanır.",
-                storyTitle: "Akıllı Telefon Macerası",
-                storyText: "Robi, akıllı telefonunda yeni bir oyun oynuyordu. Oyun, Robi'nin hareketlerini öğreniyor ve ona göre daha zorlu görevler veriyordu. Sonra annesiyle konuşmak için telefonunu kullandı. Telefon, annesinin sesini tanıyıp arama yapabiliyordu! Robi, 'Vay canına, yapay zeka ne kadar da çok şeye yarıyor!' diye düşündü. Akıllı telefonlar, yapay zeka sayesinde sesimizi tanıyıp, fotoğrafları düzenleyip, hatta bize yeni oyunlar önerebiliyor.",
-                svg: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
-                        <rect x="50" y="30" width="100" height="140" rx="15" fill="#38bdf8" opacity="0.2" />
-                        <rect x="60" y="40" width="80" height="100" rx="5" fill="#0f172a" />
-                        <circle cx="100" cy="155" r="7" fill="#a855f7" />
-                        <rect x="70" y="50" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="60" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="70" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="80" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="90" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="100" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <rect x="70" y="110" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
-                        <circle cx="100" cy="100" r="40" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.3" />
-                        <path d="M80 120 L100 135 L120 120" stroke="#a855f7" stroke-width="3" fill="none" opacity="0.3" />
-                    </svg>
-                `
-            },
-            {
-                title: "Gelecekte Yapay Zeka",
-                text: "Gelecekte yapay zeka daha da gelişecek! Belki de kendi kendine giden arabalar, hastalıkları teşhis eden robot doktorlar veya uzayı keşfeden akıllı uzay gemileri göreceğiz. Hayal gücümüzün sınırı yok!",
-                storyTitle: "Uzay Macerası",
-                storyText: "Robi, bir uzay gemisinde yapay zeka pilotu olarak görev yapıyordu. Geminin bilgisayarı, Robi'ye en güvenli rota hakkında bilgi veriyor, hatta uzaydaki yeni gezegenleri keşfetmesine yardımcı oluyordu. Bir gün, bilinmeyen bir gezegene indiler. Yapay zeka, gezegenin havasını analiz etti ve Robi'ye güvenli olduğunu söyledi. Robi, 'Yapay zeka olmasaydı, bu kadar uzağa asla gidemezdik!' diye düşündü. Gelecekte yapay zeka, bizi daha önce hiç gitmediğimiz yerlere götürebilir ve bilmediğimiz şeyleri keşfetmemize yardımcı olabilir.",
-                svg: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
-                        <path d="M50 150 L100 50 L150 150 Z" fill="#38bdf8" opacity="0.2" />
-                        <circle cx="100" cy="100" r="30" fill="#a855f7" opacity="0.2" />
-                        <path d="M70 120 Q100 100 130 120" stroke="#38bdf8" stroke-width="3" fill="none" />
-                        <circle cx="90" cy="90" r="5" fill="#a855f7" />
-                        <circle cx="110" cy="90" r="5" fill="#a855f7" />
-                        <rect x="95" y="105" width="10" height="20" fill="#a855f7" opacity="0.5" />
-                        <path d="M100 50 L100 20" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
-                        <path d="M50 150 L30 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
-                        <path d="M150 150 L170 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
-                    </svg>
-                `
-            },
-            {
-                title: "Yapay Zeka ve Biz",
-                text: "Yapay zeka, dünyayı daha iyi bir yer haline getirmemize yardımcı olabilir. Ama en önemlisi, biz insanlar olarak yapay zekayı nasıl kullanacağımıza karar vermeliyiz. İyi amaçlar için kullanırsak, harika şeyler başarabiliriz!",
-                storyTitle: "Dünyayı Kurtaran Yapay Zeka",
-                storyText: "Robi, bir gün dünyayı kurtarmak için yapay zekayı kullanmaya karar verdi. Bir ormanda çıkan yangını durdurmak için yapay zeka destekli dronları gönderdi. Dronlar, yangının nerede olduğunu ve nasıl yayıldığını hızlıca tespit etti. Robi, bu bilgileri itfaiyecilere iletti ve yangın kısa sürede söndürüldü. Robi, 'Yapay zeka, doğru ellerde olduğunda gerçek bir süper kahraman olabilir!' diye düşündü. Yapay zeka, doğal afetlerle mücadele etmek, enerji tasarrufu sağlamak ve hatta yeni ilaçlar geliştirmek gibi birçok alanda bize yardımcı olabilir. Önemli olan, onu her zaman iyi niyetle kullanmaktır.",
-                svg: `
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
-                        <circle cx="100" cy="100" r="80" fill="#38bdf8" opacity="0.1" />
-                        <circle cx="100" cy="100" r="60" fill="#a855f7" opacity="0.1" />
-                        <circle cx="100" cy="100" r="40" fill="#38bdf8" opacity="0.2" />
-                        <path d="M100 20 L120 40 L100 60 L80 40 Z" fill="#a855f7" />
-                        <path d="M100 180 L120 160 L100 140 L80 160 Z" fill="#a855f7" />
-                        <path d="M20 100 L40 120 L60 100 L40 80 Z" fill="#a855f7" />
-                        <path d="M180 100 L160 120 L140 100 L160 80 Z" fill="#a855f7" />
-                        <line x1="100" y1="60" x2="100" y2="140" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.5" />
-                        <line x1="60" y1="100" x2="140" y2="100" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.5" />
-                        <circle cx="100" cy="100" r="10" fill="#38bdf8" class="pulse" />
-                    </svg>
-                `
-            }
-        ];
+            // Game state variables
+            let userName = '';
+            let currentSection = 'intro'; // 'intro', 'learning', 'riddles', 'matching'
+            let currentCardIndex = 0;
+            let currentRiddleIndex = 0;
+            let currentLanguage = 'tr'; // Default language
 
-        // Riddles data - now with prompts for LLM
-        const riddles = [
-            {
-                prompt: "Çocuklar için yapay zeka hakkında basit bir bilmece oluştur. Cevabı tek kelime olmalı.",
-                answer: "yapay zeka"
-            },
-            {
-                prompt: "Makine öğrenmesi kavramını anlatan bir bilmece yaz. Cevabı tek kelime olmalı.",
-                answer: "makine öğrenmesi"
-            },
-            {
-                prompt: "Robotların ne olduğunu anlatan, çocuklara yönelik bir bilmece oluştur. Cevabı tek kelime olmalı.",
-                answer: "robot"
-            }
-        ];
+            let knownCards = new Set(); // Stores indices of learning cards marked as "Anladım"
+            let unknownCards = new Set(); // Stores indices of learning cards marked as "Tekrar"
+            let solvedRiddles = new Set(); // Stores indices of solved riddles
+            let matchedPairs = new Set(); // Stores IDs of matched pairs in matching game
 
-        // Matching game data (pairs of concept and description)
-        const matchingPairs = [
-            { id: 1, concept: "Yapay Zeka", description: "Bilgisayarların insanlar gibi düşünmesini sağlar." },
-            { id: 2, concept: "Makine Öğrenmesi", description: "Robotların deneyimlerden öğrenmesidir." },
-            { id: 3, concept: "Robot", description: "Yapay zeka ile çalışan bir makine." },
-            { id: 4, concept: "Algoritma", description: "Bir problemi çözmek için adım adım talimatlar." },
-            { id: 5, concept: "Veri", description: "Yapay zekanın öğrenmek için kullandığı bilgiler." },
-            { id: 6, concept: "Sensör", description: "Robotların çevreyi algılamasına yardımcı olan araç." }
-        ];
+            // Matching game specific state
+            let flippedCards = [];
+            let lockBoard = false;
 
-        // Overall progress calculation
-        const totalLearningCards = aiConcepts.length;
-        const totalRiddles = riddles.length;
-        const totalMatchingPairs = matchingPairs.length; // Number of pairs
-        const overallTotalProgressItems = totalLearningCards + totalRiddles + totalMatchingPairs; // Each pair counts as one item for progress
-
-        // Function to generate random stars
-        function generateStars() {
-            for (let i = 0; i < 100; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.width = `${Math.random() * 3 + 1}px`;
-                star.style.height = star.style.width;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.animationDelay = `${Math.random() * 2}s`;
-                starsContainer.appendChild(star);
-            }
-        }
-
-        // Function to create confetti
-        function createConfetti() {
-            const confettiColors = ['#ff7e5f', '#feb47b', '#ffc700', '#a855f7', '#38bdf8', '#ef4444', '#22c55e'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.setProperty('--color', confettiColors[Math.floor(Math.random() * confettiColors.length)]);
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.top = `${Math.random() * 100}vh`;
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
-                confetti.style.animationDuration = `${3 + Math.random() * 2}s`;
-                document.body.appendChild(confetti);
-                // Remove confetti after animation to prevent DOM bloat
-                confetti.addEventListener('animationend', () => confetti.remove());
-            }
-        }
-
-        // Function to update overall progress bar and percentage
-        function updateOverallProgress() {
-            const currentProgress = knownCards.size + solvedRiddles.size + matchedPairs.size;
-            const progressPercentage = (currentProgress / overallTotalProgressItems) * 100;
-            progressBar.style.width = `${progressPercentage}%`;
-            progressPercent.textContent = Math.round(progressPercentage);
-            overallProgressCountDisplay.textContent = currentProgress;
-            overallTotalCountDisplay.textContent = overallTotalProgressItems;
-        }
-
-        // Function to update all text content based on current language
-        function updateTextContent() {
-            document.querySelectorAll('[data-lang-key]').forEach(element => {
-                const key = element.dataset.langKey;
-                if (translations[currentLanguage][key]) {
-                    element.textContent = translations[currentLanguage][key];
+            // Translations object
+            const translations = {
+                'tr': {
+                    'welcome_title': 'YAPAY ZEKA MACERASI',
+                    'intro_message': 'Çocuklar, ebeveynlerinizle birlikte misiniz? Eğer size eşlik edecek bir yetişkin varsa, haydi başlayalım!',
+                    'continue_button': 'DEVAM ET',
+                    'welcome_intro': 'Merhaba genç kaşif! Yapay zeka dünyasına heyecan verici bir yolculuğa çıkmaya hazır mısın?',
+                    'enter_name': 'İSMİNİ GİR:',
+                    'name_placeholder': 'Adın ve Soyadın',
+                    'start_button': 'BAŞLA',
+                    'name_hint': '* İsmin sertifikanda görünecek',
+                    'learn_title': 'ÖĞREN',
+                    'learn_text': 'Yapay zeka hakkında eğlenceli hikayeler ve açıklamalarla yeni bilgiler öğren.',
+                    'explore_title': 'KEŞFET',
+                    'explore_text': 'Robotlar ve yapay zeka dünyasını interaktif kartlarla keşfet.',
+                    'certificate_title': 'SERTİFİKA',
+                    'certificate_text': 'Tüm kartları tamamla ve kendi özel yapay zeka sertifikanı kazan!',
+                    'hello_explorer': 'Merhaba',
+                    'ready_to_explore': '! Yapay zeka dünyasını keşfetmeye hazır mısın?',
+                    'progress': 'İLERLEME',
+                    'progress_bar_label': 'İLERLEME ÇUBUĞU',
+                    'child_friendly': 'ÇOCUK DOSTU',
+                    'concept': 'KAVRAM',
+                    'flip_card_hint': 'HİKAYEYİ OKUMAK İÇİN KARTI ÇEVİR',
+                    'listen_story_button': 'DİNLE', // New translation
+                    'prev_button': 'ÖNCEKİ',
+                    'next_button': 'SONRAKİ',
+                    'understood_button': 'ANLADIM',
+                    'repeat_button': 'TEKRAR',
+                    'learning_stats': 'ÖĞRENME İSTATİSTİKLERİ',
+                    'total_cards': 'TOPLAM KART',
+                    'understood': 'ANLAŞILAN',
+                    'to_repeat': 'TEKRAR EDİLECEK',
+                    'remaining': 'KALAN',
+                    'reset_button': 'SIFIRLA',
+                    'ask_robi_title': '✨ Robi\'ye Soru Sor',
+                    'ask_robi_prompt': 'Yapay zeka hakkında bir soru sor:',
+                    'ask_robi_placeholder': 'Örn: Robotlar rüya görür mü?',
+                    'ask_robi_button': 'SOR ✨',
+                    'robi_thinking': 'Robi düşünüyor...',
+                    'robi_answer_placeholder': 'Robi\'nin cevabını bekliyorum...',
+                    'robi_no_question': 'Lütfen bir soru yaz!',
+                    'robi_api_error': 'Üzgünüm, şu an cevap veremiyorum. Daha sonra tekrar dene.',
+                    'ai_story_generator_title': '✨ Yapay Zeka Hikaye Oluşturucu',
+                    'story_keywords_prompt': 'Hikayende hangi anahtar kelimeler olsun? (virgülle ayır)',
+                    'story_keywords_placeholder': 'Örn: robot, uzay, arkadaşlık',
+                    'generate_story_button': 'HİKAYE OLUŞTUR ✨',
+                    'story_placeholder': 'Hikayen burada belirecek...',
+                    'story_no_keywords': 'Lütfen hikaye oluşturmak için anahtar kelimeler girin!',
+                    'story_loading': 'Hikaye oluşturuluyor...',
+                    'story_api_error': 'Hikaye oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
+                    'ai_scenario_title': '✨ Yapay Zeka Ne Yapar?',
+                    'scenario_prompt': 'Bir senaryo yaz:',
+                    'scenario_placeholder': 'Örn: Bir robot hastanede',
+                    'analyze_scenario_button': 'ANALİZ ET ✨',
+                    'scenario_analysis_placeholder': 'Yapay zeka bu senaryoda ne yapabilir?',
+                    'scenario_no_input': 'Lütfen bir senaryo yazın!',
+                    'scenario_loading': 'Senaryo analiz ediliyor...',
+                    'scenario_api_error': 'Senaryo analiz edilirken bir hata oluştu. Lütfen tekrar dene.',
+                    'ai_fun_fact_title': '✨ Yapay Zeka Eğlenceli Bilgi',
+                    'generate_fun_fact_button': 'EĞLENCELİ BİLGİ OLUŞTUR ✨',
+                    'fun_fact_placeholder': 'Yapay zeka hakkında eğlenceli bir bilgi burada belirecek...',
+                    'fun_fact_loading': 'Eğlenceli bilgi oluşturuluyor...',
+                    'fun_fact_api_error': 'Eğlenceli bilgi oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
+                    'ai_invention_title': '✨ Yapay Zeka İcat Fikri',
+                    'invention_topic_prompt': 'Hangi konuda icat fikri istersin?',
+                    'invention_topic_placeholder': 'Örn: evcil hayvanlar, çevre, oyunlar',
+                    'generate_invention_button': 'İCAT FİKRİ OLUŞTUR ✨',
+                    'invention_placeholder': 'Yapay zeka icat fikrin burada belirecek...',
+                    'invention_loading': 'İcat fikri oluşturuluyor...',
+                    'invention_no_topic': 'Lütfen bir icat konusu girin!',
+                    'invention_api_error': 'İcat fikri oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
+                    'riddle_title': 'YAPAY ZEKA BİLMECELERİ',
+                    'riddle_intro': 'Yapay zeka bilginizi test etme zamanı! Aşağıdaki bilmeceyi çözebilir misin?',
+                    'riddle_input_placeholder': 'Cevabını buraya yaz...',
+                    'answer_button': 'CEVAPLA',
+                    'riddle_correct': 'Doğru! Harikasın!',
+                    'riddle_incorrect': 'Yanlış cevap. Tekrar dene!',
+                    'riddle_loading': 'Bilmeceler yükleniyor...',
+                    'riddle_load_error': 'Bilmeceler yüklenemedi. Lütfen tekrar deneyin.',
+                    'riddle_api_error': 'Bilmeceler yüklenirken bir hata oluştu.',
+                    'riddle_count_label': 'BİLMECE',
+                    'proceed_to_matching': 'EŞLEŞTİRME OYUNUNA GEÇ',
+                    'matching_game_title': 'EŞLEŞTİRME OYUNU',
+                    'matching_game_intro': 'Kartları çevir ve aynı kavramları eşleştir!',
+                    'matching_matched': 'Eşleşti!',
+                    'matching_not_matched': 'Eşleşmedi, tekrar dene!',
+                    'matching_all_matched': 'Tebrikler! Tüm çiftleri eşleştirdin!',
+                    'reset_matching_button': 'YENİDEN BAŞLA',
+                    'get_certificate_button': 'SERTİFİKANI AL!',
+                    'certificate_main_title': 'YAPAY ZEKADA UZMANLIK SERTİFİKASI',
+                    'certificate_honored': 'Bu sertifika ile onurlandırılmıştır:',
+                    'certificate_completion_text': 'Yapay zeka macera derslerini başarıyla tamamladığı için.',
+                    'congratulations': 'Tebrikler!',
+                    'date_issued': 'Veriliş Tarihi:',
+                    'back_to_game': 'GERİ DÖN',
+                    'print_certificate': 'YAZDIR',
+                    'certificate_message_loading': 'Mesajınız oluşturuluyor...',
+                    'certificate_message_default': 'Tebrikler! Yapay zeka maceranı başarıyla tamamladın!',
+                    'confirm_reset': 'Tüm ilerlemenizi sıfırlamak istediğinizden emin misiniz?',
+                    'about_title': 'Hakkında',
+                    'about_text': 'Bu sayfada yer alan bilgiler, kaynak gösterilen içeriklerden derlenmiştir. Sertifikanın yasal bir geçerliliği yoktur, sadece eğitim amacıyla ve kar gütmeden hazırlanmıştır.',
+                    'contact_title': 'İletişim',
+                    'contact_message': 'Sorularınız veya geri bildirimleriniz için LinkedIn üzerinden iletişime geçebilirsiniz:',
+                    'all_rights_reserved': 'Tüm Hakları Saklıdır. Bu içerik eğitim amaçlıdır.'
+                },
+                'en': {
+                    'welcome_title': 'AI ADVENTURE',
+                    'intro_message': 'Kids, are you with your parents? If you have an adult accompanying you, let\'s begin!',
+                    'continue_button': 'CONTINUE',
+                    'welcome_intro': 'Hello young explorer! Are you ready for an exciting journey into the world of artificial intelligence?',
+                    'enter_name': 'ENTER YOUR NAME:',
+                    'name_placeholder': 'Your Name and Surname',
+                    'start_button': 'START',
+                    'name_hint': '* Your name will appear on your certificate',
+                    'learn_title': 'LEARN',
+                    'learn_text': 'Learn new things about artificial intelligence with fun stories and explanations.',
+                    'explore_title': 'EXPLORE',
+                    'explore_text': 'Explore the world of robots and artificial intelligence with interactive cards.',
+                    'certificate_title': 'CERTIFICATE',
+                    'certificate_text': 'Complete all cards and earn your special AI certificate!',
+                    'hello_explorer': 'Hello',
+                    'ready_to_explore': '! Are you ready to explore the world of artificial intelligence?',
+                    'progress': 'PROGRESS',
+                    'progress_bar_label': 'PROGRESS BAR',
+                    'child_friendly': 'CHILD FRIENDLY',
+                    'concept': 'CONCEPT',
+                    'flip_card_hint': 'FLIP THE CARD TO READ THE STORY',
+                    'listen_story_button': 'LISTEN', // New translation
+                    'prev_button': 'PREVIOUS',
+                    'next_button': 'NEXT',
+                    'understood_button': 'UNDERSTOOD',
+                    'repeat_button': 'REPEAT',
+                    'learning_stats': 'LEARNING STATISTICS',
+                    'total_cards': 'TOTAL CARDS',
+                    'understood': 'UNDERSTOOD',
+                    'to_repeat': 'TO REPEAT',
+                    'remaining': 'REMAINING',
+                    'reset_button': 'RESET',
+                    'ask_robi_title': '✨ Ask Robi',
+                    'ask_robi_prompt': 'Ask a question about artificial intelligence:',
+                    'ask_robi_placeholder': 'Ex: Do robots dream?',
+                    'ask_robi_button': 'ASK ✨',
+                    'robi_thinking': 'Robi is thinking...',
+                    'robi_answer_placeholder': 'Waiting for Robi\'s answer...',
+                    'robi_no_question': 'Please write a question!',
+                    'robi_api_error': 'Sorry, I cannot answer right now. Please try again later.',
+                    'ai_story_generator_title': '✨ AI Story Generator',
+                    'story_keywords_prompt': 'What keywords should be in your story? (separate with commas)',
+                    'story_keywords_placeholder': 'Ex: robot, space, friendship',
+                    'generate_story_button': 'GENERATE STORY ✨',
+                    'story_placeholder': 'Your story will appear here...',
+                    'story_no_keywords': 'Please enter keywords to generate a story!',
+                    'story_loading': 'Generating story...',
+                    'story_api_error': 'An error occurred while generating the story. Please try again.',
+                    'ai_scenario_title': '✨ What Does This AI Do?',
+                    'scenario_prompt': 'Write a scenario:',
+                    'scenario_placeholder': 'Ex: A robot in a hospital',
+                    'analyze_scenario_button': 'ANALYZE ✨',
+                    'scenario_analysis_placeholder': 'What can AI do in this scenario?',
+                    'scenario_no_input': 'Please write a scenario!',
+                    'scenario_loading': 'Analyzing scenario...',
+                    'scenario_api_error': 'An error occurred while analyzing the scenario. Please try again.',
+                    'ai_fun_fact_title': '✨ AI Fun Fact',
+                    'generate_fun_fact_button': 'GENERATE FUN FACT ✨',
+                    'fun_fact_placeholder': 'A fun fact about AI will appear here...',
+                    'fun_fact_loading': 'Generating fun fact...',
+                    'fun_fact_api_error': 'An error occurred while generating the fun fact. Please try again.',
+                    'ai_invention_title': '✨ AI Invention Idea',
+                    'invention_topic_prompt': 'What topic would you like an invention idea for?',
+                    'invention_topic_placeholder': 'Ex: pets, environment, games',
+                    'generate_invention_button': 'GENERATE INVENTION IDEA ✨',
+                    'invention_placeholder': 'Your AI invention idea will appear here...',
+                    'invention_loading': 'Generating invention idea...',
+                    'invention_no_topic': 'Please enter an invention topic!',
+                    'invention_api_error': 'An error occurred while generating the invention idea. Please try again.',
+                    'riddle_title': 'AI RIDDLES',
+                    'riddle_intro': 'Time to test your AI knowledge! Can you solve the riddle below?',
+                    'riddle_input_placeholder': 'Type your answer here...',
+                    'answer_button': 'ANSWER',
+                    'riddle_correct': 'Correct! Amazing!',
+                    'riddle_incorrect': 'Wrong answer. Try again!',
+                    'riddle_loading': 'Riddles are loading...',
+                    'riddle_load_error': 'Could not load riddles. Please try again.',
+                    'riddle_api_error': 'An error occurred while loading riddles.',
+                    'riddle_count_label': 'RIDDLE',
+                    'proceed_to_matching': 'PROCEED TO MATCHING GAME',
+                    'matching_game_title': 'MATCHING GAME',
+                    'matching_game_intro': 'Flip the cards and match the same concepts!',
+                    'matching_matched': 'Matched!',
+                    'matching_not_matched': 'Not matched, try again!',
+                    'matching_all_matched': 'Congratulations! You matched all pairs!',
+                    'reset_matching_button': 'RESTART',
+                    'get_certificate_button': 'GET YOUR CERTIFICATE!',
+                    'certificate_main_title': 'CERTIFICATE OF EXPERTISE IN AI',
+                    'certificate_honored': 'This certificate is honored to:',
+                    'certificate_completion_text': 'For successfully completing the artificial intelligence adventure lessons.',
+                    'congratulations': 'Congratulations!',
+                    'date_issued': 'Date Issued:',
+                    'back_to_game': 'GO BACK',
+                    'print_certificate': 'PRINT',
+                    'certificate_message_loading': 'Generating your message...',
+                    'certificate_message_default': 'Congratulations! You have successfully completed your AI adventure!',
+                    'confirm_reset': 'Are you sure you want to reset all your progress?',
+                    'about_title': 'About',
+                    'about_text': 'The information on this page is compiled from referenced content. The certificate has no legal validity and is prepared for educational purposes only, without profit.',
+                    'contact_title': 'Contact',
+                    'contact_message': 'For questions or feedback, you can contact via LinkedIn:',
+                    'all_rights_reserved': 'All Rights Reserved. This content is for educational purposes.'
                 }
-            });
-            document.querySelectorAll('[data-lang-placeholder-key]').forEach(element => {
-                const key = element.dataset.langPlaceholderKey;
-                if (translations[currentLanguage][key]) {
-                    element.placeholder = translations[currentLanguage][key];
-                }
-            });
-            // Special handling for dynamic content that needs to be re-rendered
-            if (currentSection === 'learning') {
-                updateLearningCard();
-            } else if (currentSection === 'riddles') {
-                loadRiddle(); // Re-load riddle to get it in the correct language
-            }
-            // Update user name display if available
-            if (userNameDisplay.textContent) {
-                userNameDisplay.textContent = userName;
-            }
-            if (certificateUserName.textContent) {
-                certificateUserName.textContent = userName;
-            }
-        }
+            };
 
-        // --- Language Toggle Event Listeners ---
-        langToggleTr.addEventListener('click', () => {
-            currentLanguage = 'tr';
-            updateTextContent();
-            langToggleTr.classList.add('bg-gray-700');
-            langToggleEn.classList.remove('bg-gray-700');
-        });
-
-        langToggleEn.addEventListener('click', () => {
-            currentLanguage = 'en';
-            updateTextContent();
-            langToggleEn.classList.add('bg-gray-700');
-            langToggleTr.classList.remove('bg-gray-700');
-        });
-
-        // --- Learning Card Functions ---
-        function updateLearningCard() {
-            const card = aiConcepts[currentCardIndex];
-            cardFrontTitle.textContent = card.title;
-            cardFrontText.textContent = card.text;
-            cardFrontSvg.innerHTML = card.svg; // Set innerHTML for SVG
-            cardBackTitle.textContent = card.storyTitle;
-            cardBackText.textContent = card.storyText;
-            cardBadge.textContent = `${translations[currentLanguage]['concept']} #${currentCardIndex + 1}`;
-
-            // Reset card flip state
-            currentCardElement.classList.remove('flipped');
-
-            // Update button states
-            btnPrev.disabled = currentCardIndex === 0;
-            btnNext.disabled = currentCardIndex === aiConcepts.length - 1; // Always allow next for learning cards
-
-            // Enable/disable "Anladım" and "Tekrar" based on current card's state
-            btnKnown.disabled = knownCards.has(currentCardIndex);
-            btnUnknown.disabled = unknownCards.has(currentCardIndex); 
-
-            updateLearningStats();
-            updateOverallProgress();
-
-            // If all learning cards are known, enable the "Complete" button
-            // Removed: if (knownCards.size === totalLearningCards) {
-            // Removed:     btnComplete.classList.remove('hidden');
-            // Removed: } else {
-            // Removed:     btnComplete.classList.add('hidden');
-            // Removed: }
-        }
-
-        function updateLearningStats() {
-            statsKnown.textContent = knownCards.size;
-            statsUnknown.textContent = unknownCards.size;
-            statsRemaining.textContent = aiConcepts.length - knownCards.size;
-        }
-
-        // --- Robi AI Chat Function ---
-        async function askRobi() {
-            const question = robiQuestionInput.value.trim();
-            if (!question) {
-                robiAnswer.textContent = translations[currentLanguage]['robi_no_question'];
-                return;
-            }
-
-            robiAnswer.textContent = translations[currentLanguage]['robi_thinking'];
-            robiLoadingIndicator.classList.remove('hidden');
-            askRobiBtn.disabled = true;
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `A child is asking you a question about AI. Answer in a child-friendly, short, and concise way. The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}. Question: "${question}"` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    robiAnswer.textContent = text;
-                } else {
-                    robiAnswer.textContent = translations[currentLanguage]['robi_api_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                robiAnswer.textContent = translations[currentLanguage]['robi_api_error'];
-            } finally {
-                robiLoadingIndicator.classList.add('hidden');
-                askRobiBtn.disabled = false;
-                robiQuestionInput.value = '';
-            }
-        }
-
-        // --- AI Story Generator Function ---
-        async function generateAIStory() {
-            const keywords = storyKeywordsInput.value.trim();
-            if (!keywords) {
-                storyText.textContent = translations[currentLanguage]['story_no_keywords'];
-                return;
-            }
-
-            storyText.textContent = translations[currentLanguage]['story_loading'];
-            storyLoadingIndicator.classList.remove('hidden');
-            generateStoryBtn.disabled = true;
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly story (around 100-150 words) about AI, robots, or technology, incorporating the following keywords: "${keywords}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    storyText.textContent = text;
-                } else {
-                    storyText.textContent = translations[currentLanguage]['story_api_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                storyText.textContent = translations[currentLanguage]['story_api_error'];
-            } finally {
-                storyLoadingIndicator.classList.add('hidden');
-                generateStoryBtn.disabled = false;
-                // storyKeywordsInput.value = ''; // Keep keywords for easy re-generation
-            }
-        }
-
-        // --- "What Does This AI Do?" Scenario Generator Function ---
-        async function analyzeAIScenario() {
-            const scenario = scenarioInput.value.trim();
-            if (!scenario) {
-                scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_no_input'];
-                return;
-            }
-
-            scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_loading'];
-            scenarioLoadingIndicator.classList.remove('hidden');
-            analyzeScenarioBtn.disabled = true;
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `Given the scenario: "${scenario}", describe in 2-3 sentences what AI might do or how it would be used in a child-friendly way. The explanation should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    scenarioAnalysisText.textContent = text;
-                } else {
-                    scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_api_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_api_error'];
-            } finally {
-                scenarioLoadingIndicator.classList.add('hidden');
-                analyzeScenarioBtn.disabled = false;
-                // scenarioInput.value = ''; // Keep scenario for easy re-analysis
-            }
-        }
-
-        // --- AI Fun Fact Generator Function ---
-        async function generateAIFunFact() {
-            funFactText.textContent = translations[currentLanguage]['fun_fact_loading'];
-            funFactLoadingIndicator.classList.remove('hidden');
-            generateFunFactBtn.disabled = true;
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `Generate a short, interesting, and child-friendly fun fact about Artificial Intelligence or robots. The fact should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    funFactText.textContent = text;
-                } else {
-                    funFactText.textContent = translations[currentLanguage]['fun_fact_api_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                funFactText.textContent = translations[currentLanguage]['fun_fact_api_error'];
-            } finally {
-                funFactLoadingIndicator.classList.add('hidden');
-                generateFunFactBtn.disabled = false;
-            }
-        }
-
-        // --- AI Invention Idea Generator Function ---
-        async function generateAIInventionIdea() {
-            const topic = inventionTopicInput.value.trim();
-            if (!topic) {
-                inventionText.textContent = translations[currentLanguage]['invention_no_topic'];
-                return;
-            }
-
-            inventionText.textContent = translations[currentLanguage]['invention_loading'];
-            inventionLoadingIndicator.classList.remove('hidden');
-            generateInventionBtn.disabled = true;
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `Generate a creative and child-friendly idea for an AI invention related to "${topic}". Describe it in 2-3 sentences. The idea should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    inventionText.textContent = text;
-                } else {
-                    inventionText.textContent = translations[currentLanguage]['invention_api_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                inventionText.textContent = translations[currentLanguage]['invention_api_error'];
-            } finally {
-                inventionLoadingIndicator.classList.add('hidden');
-                generateInventionBtn.disabled = false;
-                // inventionTopicInput.value = ''; // Keep topic for easy re-generation
-            }
-        }
-
-
-        // --- Riddle Functions ---
-        async function showRiddleScreen() {
-            gameScreen.classList.add('hidden');
-            riddleScreen.classList.remove('hidden');
-            currentSection = 'riddles';
-            await loadRiddle(); // Await the riddle loading
-        }
-
-        async function loadRiddle() {
-            riddleQuestion.textContent = translations[currentLanguage]['riddle_loading'];
-            riddleAnswerInput.value = '';
-            riddleFeedback.textContent = '';
-            riddleFeedback.className = 'text-center mt-4 font-bold';
-            riddleLoadingIndicator.classList.remove('hidden');
-            submitRiddleAnswerBtn.disabled = true;
-            btnPrevRiddle.disabled = true;
-            btnNextRiddle.disabled = true;
-
-            try {
-                const riddleData = riddles[currentRiddleIndex];
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `${riddleData.prompt} The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const generatedRiddle = result.candidates[0].content.parts[0].text;
-                    riddleQuestion.textContent = generatedRiddle;
-                } else {
-                    riddleQuestion.textContent = translations[currentLanguage]['riddle_load_error'];
-                }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                riddleQuestion.textContent = translations[currentLanguage]['riddle_api_error'];
-            } finally {
-                riddleLoadingIndicator.classList.add('hidden');
-                submitRiddleAnswerBtn.disabled = solvedRiddles.has(currentRiddleIndex);
-                btnPrevRiddle.disabled = currentRiddleIndex === 0;
-                btnNextRiddle.disabled = currentRiddleIndex === riddles.length - 1 || !solvedRiddles.has(currentRiddleIndex);
-                
-                riddleCountDisplay.textContent = solvedRiddles.size;
-                updateOverallProgress();
-
-                if (solvedRiddles.size === totalRiddles) {
-                    btnNextRiddle.disabled = false;
-                    btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
-                    btnNextRiddle.removeEventListener('click', nextRiddle);
-                    btnNextRiddle.addEventListener('click', showMatchingGameScreen);
-                } else {
-                    btnNextRiddle.textContent = translations[currentLanguage]['next_button'];
-                    btnNextRiddle.removeEventListener('click', showMatchingGameScreen);
-                    btnNextRiddle.addEventListener('click', nextRiddle);
-                }
-            }
-        }
-
-        function checkRiddleAnswer() {
-            const userAnswer = riddleAnswerInput.value.trim().toLowerCase();
-            const correctAnswer = riddles[currentRiddleIndex].answer.toLowerCase();
-
-            if (userAnswer === correctAnswer) {
-                riddleFeedback.textContent = translations[currentLanguage]['riddle_correct'];
-                riddleFeedback.classList.remove('text-red-400');
-                riddleFeedback.classList.add('text-green-400');
-                solvedRiddles.add(currentRiddleIndex);
-                submitRiddleAnswerBtn.disabled = true;
-                if (solvedRiddles.size === totalRiddles) {
-                    btnNextRiddle.disabled = false;
-                    btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
-                    btnNextRiddle.removeEventListener('click', nextRiddle);
-                    btnNextRiddle.addEventListener('click', showMatchingGameScreen);
-                } else {
-                    btnNextRiddle.disabled = false; 
-                }
-            } else {
-                riddleFeedback.textContent = translations[currentLanguage]['riddle_incorrect'];
-                riddleFeedback.classList.remove('text-green-400');
-                riddleFeedback.classList.add('text-red-400');
-                solvedRiddles.delete(currentRiddleIndex); 
-                btnNextRiddle.disabled = true; 
-            }
-            riddleCountDisplay.textContent = solvedRiddles.size;
-            updateOverallProgress();
-        }
-
-        async function prevRiddle() {
-            if (currentRiddleIndex > 0) {
-                currentRiddleIndex--;
-                await loadRiddle();
-            }
-        }
-
-        async function nextRiddle() {
-            if (currentRiddleIndex < riddles.length - 1) {
-                currentRiddleIndex++;
-                await loadRiddle();
-            }
-        }
-
-        // --- Matching Game Functions ---
-        function showMatchingGameScreen() {
-            riddleScreen.classList.add('hidden');
-            matchingGameScreen.classList.remove('hidden');
-            currentSection = 'matching';
-            initializeMatchingGame();
-            updateOverallProgress();
-        }
-
-        function initializeMatchingGame() {
-            matchingGrid.innerHTML = ''; 
-            flippedCards = [];
-            lockBoard = false;
-            matchedPairs.clear(); 
-
-            const cards = [...matchingPairs.flatMap(pair => [
-                { id: pair.id, text: pair.concept, type: 'concept' },
-                { id: pair.id, text: pair.description, type: 'description' }
-            ])];
-
-            // Shuffle cards
-            cards.sort(() => Math.random() - 0.5);
-
-            cards.forEach((cardData, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('matching-card');
-                cardElement.dataset.id = cardData.id;
-                cardElement.dataset.type = cardData.type;
-                cardElement.dataset.index = index; 
-
-                cardElement.innerHTML = `
-                    <div class="card-face card-front-face">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z" />
+            // AI Concepts data (learning cards)
+            const aiConcepts = [
+                {
+                    title: "Yapay Zeka Nedir?",
+                    text: "Merhaba! Ben Robot Robi. Yapay zeka, bilgisayarların insanlar gibi düşünmesini ve öğrenmesini sağlayan bir teknolojidir. Benim gibi robotlar, yapay zeka sayesinde seninle konuşabilir ve sorularını yanıtlayabilir.",
+                    storyTitle: "Robot Robi'nin Macerası",
+                    storyText: "Bir zamanlar, küçük bir robot olan Robi vardı. Robi, yapay zeka sayesinde her gün yeni şeyler öğreniyordu. Bir gün, bir çocuk ona \"2+2 kaç eder?\" diye sordu. Robi hemen \"4!\" diye cevap verdi. Sonra çocuk \"Peki, en sevdiğin renk ne?\" diye sordu. Robi düşündü ve \"Henüz bir renge karar vermedim, çünkü hala öğreniyorum!\" dedi. Yapay zeka, Robi'nin sorulara cevap vermesini ve yeni bilgiler öğrenmesini sağlıyordu. Tıpkı senin okulda öğrendiğin gibi, Robi de her gün yeni şeyler öğreniyor ve daha akıllı hale geliyordu.",
+                    svg: `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
+                            <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
+                            <circle cx="85" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
+                            <circle cx="115" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
+                            <path d="M85 85 Q100 100 115 85" stroke="#38bdf8" stroke-width="3" fill="none" />
+                            <rect x="60" y="110" width="80" height="60" rx="10" fill="#38bdf8" opacity="0.2" />
+                            <rect x="70" y="125" width="60" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="145" width="40" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
+                            <circle cx="70" cy="40" r="10" fill="#a855f7" opacity="0.3" />
+                            <circle cx="130" cy="40" r="10" fill="#a855f7" opacity="0.3" />
+                            <path d="M70 40 Q100 10 130 40" stroke="#a855f7" stroke-width="5" fill="none" opacity="0.3" />
                         </svg>
-                    </div>
-                    <div class="card-face card-back-face">
-                        ${cardData.text}
-                    </div>
-                `;
-                cardElement.addEventListener('click', flipCard);
-                matchingGrid.appendChild(cardElement);
-            });
-
-            matchingFeedback.textContent = '';
-            btnCompleteMatching.classList.add('hidden');
-        }
-
-        function flipCard() {
-            if (lockBoard) return;
-            if (this === flippedCards[0]) return; 
-
-            this.classList.add('flipped');
-            flippedCards.push(this);
-
-            if (flippedCards.length === 2) {
-                lockBoard = true;
-                checkForMatch();
-            }
-        }
-
-        function checkForMatch() {
-            const [firstCard, secondCard] = flippedCards;
-            const isMatch = firstCard.dataset.id === secondCard.dataset.id && firstCard.dataset.type !== secondCard.dataset.type;
-
-            if (isMatch) {
-                disableCards();
-                matchedPairs.add(parseInt(firstCard.dataset.id)); 
-                matchingFeedback.textContent = translations[currentLanguage]['matching_matched'];
-                matchingFeedback.classList.remove('text-red-400');
-                matchingFeedback.classList.add('text-green-400');
-            } else {
-                unflipCards();
-                matchingFeedback.textContent = translations[currentLanguage]['matching_not_matched'];
-                matchingFeedback.classList.remove('text-green-400');
-                matchingFeedback.classList.add('text-red-400');
-            }
-            updateOverallProgress();
-            if (matchedPairs.size === totalMatchingPairs) {
-                matchingFeedback.textContent = translations[currentLanguage]['matching_all_matched'];
-                matchingFeedback.classList.remove('text-red-400');
-                matchingFeedback.classList.add('text-green-400');
-                btnCompleteMatching.classList.remove('hidden');
-                createConfetti(); // Trigger confetti when all matching pairs are found
-            }
-        }
-
-        function disableCards() {
-            flippedCards.forEach(card => {
-                card.removeEventListener('click', flipCard);
-                card.classList.add('matched');
-            });
-            resetBoard();
-        }
-
-        function unflipCards() {
-            setTimeout(() => {
-                flippedCards.forEach(card => {
-                    card.classList.remove('flipped');
-                });
-                resetBoard();
-            }, 1000);
-        }
-
-        function resetBoard() {
-            [flippedCards, lockBoard] = [[], false];
-        }
-
-        // --- Screen Transition Functions ---
-        async function showCertificateScreen() {
-            gameScreen.classList.add('hidden');
-            riddleScreen.classList.add('hidden');
-            matchingGameScreen.classList.add('hidden');
-            certificateScreen.classList.remove('hidden');
-            certificateUserName.textContent = userName;
-            certificateDate.textContent = new Date().toLocaleDateString(currentLanguage === 'tr' ? 'tr-TR' : 'en-US');
-
-            // Generate personalized certificate message
-            certificateMessage.textContent = translations[currentLanguage]['certificate_message_loading'];
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: `A child named ${userName} completed the AI adventure. Write a 2-3 sentence, motivating, AI-themed congratulatory message for them. The message should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
-                const payload = { contents: chatHistory };
-                const apiKey = ""; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const message = result.candidates[0].content.parts[0].text;
-                    certificateMessage.textContent = message;
-                } else {
-                    certificateMessage.textContent = translations[currentLanguage]['certificate_message_default'];
+                    `
+                },
+                {
+                    title: "Robotlar Nasıl Öğrenir?",
+                    text: "Robotlar, tıpkı senin gibi, deneyimlerden öğrenirler. Onlara ne kadar çok bilgi verirsek ve ne kadar çok pratik yaparlarsa, o kadar akıllı olurlar. Buna 'Makine Öğrenmesi' denir.",
+                    storyTitle: "Akıllı Köpek Robi",
+                    storyText: "Robi'nin yeni arkadaşı, bir robot köpek olan Data'ydı. Data, etraftaki eşyaları tanımayı öğreniyordu. İlk başta bir topu ve bir ayakkabıyı ayırt edemiyordu. Ama Robi ona sürekli 'Bu top, bu ayakkabı!' diye gösterdi. Data, her doğru bildiğinde 'Harika!' sesi duyuyordu. Zamanla Data, topu gördüğünde havlamayı, ayakkabıyı gördüğünde ise sessiz kalmayı öğrendi. Bu, Data'nın makine öğrenmesi sayesinde akıllanmasıydı!",
+                    svg: `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
+                            <path d="M100 20 C130 20, 140 50, 120 70 L120 130 C140 150, 130 180, 100 180 C70 180, 60 150, 80 130 L80 70 C60 50, 70 20, 100 20 Z" fill="#a855f7" opacity="0.2" />
+                            <circle cx="85" cy="60" r="8" fill="#a855f7" class="robot-eye" />
+                            <circle cx="115" cy="60" r="8" fill="#a855f7" class="robot-eye" />
+                            <path d="M85 85 Q100 100 115 85" stroke="#a855f7" stroke-width="3" fill="none" />
+                            <rect x="70" y="140" width="60" height="10" rx="5" fill="#a855f7" opacity="0.5" />
+                            <circle cx="70" cy="160" r="10" fill="#38bdf8" opacity="0.3" />
+                            <circle cx="130" cy="160" r="10" fill="#38bdf8" opacity="0.3" />
+                            <path d="M70 160 Q100 190 130 160" stroke="#38bdf8" stroke-width="5" fill="none" opacity="0.3" />
+                        </svg>
+                    `
+                },
+                {
+                    title: "Yapay Zeka Nelerde Kullanılır?",
+                    text: "Yapay zeka hayatımızın birçok yerinde var! Akıllı telefonlarımızda, oyunlarda, hatta arabalarda bile bize yardımcı oluyor. Örneğin, seni doğru yere götüren navigasyon uygulamaları yapay zeka kullanır.",
+                    storyTitle: "Akıllı Telefon Macerası",
+                    storyText: "Robi, akıllı telefonunda yeni bir oyun oynuyordu. Oyun, Robi'nin hareketlerini öğreniyor ve ona göre daha zorlu görevler veriyordu. Sonra annesiyle konuşmak için telefonunu kullandı. Telefon, annesinin sesini tanıyıp arama yapabiliyordu! Robi, 'Vay canına, yapay zeka ne kadar da çok şeye yarıyor!' diye düşündü. Akıllı telefonlar, yapay zeka sayesinde sesimizi tanıyıp, fotoğrafları düzenleyip, hatta bize yeni oyunlar önerebiliyor.",
+                    svg: `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
+                            <rect x="50" y="30" width="100" height="140" rx="15" fill="#38bdf8" opacity="0.2" />
+                            <rect x="60" y="40" width="80" height="100" rx="5" fill="#0f172a" />
+                            <circle cx="100" cy="155" r="7" fill="#a855f7" />
+                            <rect x="70" y="50" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="60" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="70" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="80" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="90" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="100" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <rect x="70" y="110" width="60" height="5" rx="2" fill="#38bdf8" opacity="0.5" />
+                            <circle cx="100" cy="100" r="40" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.3" />
+                            <path d="M80 120 L100 135 L120 120" stroke="#a855f7" stroke-width="3" fill="none" opacity="0.3" />
+                        </svg>
+                    `
+                },
+                {
+                    title: "Gelecekte Yapay Zeka",
+                    text: "Gelecekte yapay zeka daha da gelişecek! Belki de kendi kendine giden arabalar, hastalıkları teşhis eden robot doktorlar veya uzayı keşfeden akıllı uzay gemileri göreceğiz. Hayal gücümüzün sınırı yok!",
+                    storyTitle: "Uzay Macerası",
+                    storyText: "Robi, bir uzay gemisinde yapay zeka pilotu olarak görev yapıyordu. Geminin bilgisayarı, Robi'ye en güvenli rota hakkında bilgi veriyor, hatta uzaydaki yeni gezegenleri keşfetmesine yardımcı oluyordu. Bir gün, bilinmeyen bir gezegene indiler. Yapay zeka, gezegenin havasını analiz etti ve Robi'ye güvenli olduğunu söyledi. Robi, 'Yapay zeka olmasaydı, bu kadar uzağa asla gidemezdik!' diye düşündü. Gelecekte yapay zeka, bizi daha önce hiç gitmediğimiz yerlere götürebilir ve bilmediğimiz şeyleri keşfetmemize yardımcı olabilir.",
+                    svg: `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
+                            <path d="M50 150 L100 50 L150 150 Z" fill="#38bdf8" opacity="0.2" />
+                            <circle cx="100" cy="100" r="30" fill="#a855f7" opacity="0.2" />
+                            <path d="M70 120 Q100 100 130 120" stroke="#38bdf8" stroke-width="3" fill="none" />
+                            <circle cx="90" cy="90" r="5" fill="#a855f7" />
+                            <circle cx="110" cy="90" r="5" fill="#a855f7" />
+                            <rect x="95" y="105" width="10" height="20" fill="#a855f7" opacity="0.5" />
+                            <path d="M100 50 L100 20" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
+                            <path d="M50 150 L30 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
+                            <path d="M150 150 L170 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
+                        </svg>
+                    `
+                },
+                {
+                    title: "Yapay Zeka ve Biz",
+                    text: "Yapay zeka, dünyayı daha iyi bir yer haline getirmemize yardımcı olabilir. Ama en önemlisi, biz insanlar olarak yapay zekayı nasıl kullanacağımıza karar vermeliyiz. İyi amaçlar için kullanırsak, harika şeyler başarabiliriz!",
+                    storyTitle: "Dünyayı Kurtaran Yapay Zeka",
+                    storyText: "Robi, bir gün dünyayı kurtarmak için yapay zekayı kullanmaya karar verdi. Bir ormanda çıkan yangını durdurmak için yapay zeka destekli dronları gönderdi. Dronlar, yangının nerede olduğunu ve nasıl yayıldığını hızlıca tespit etti. Robi, bu bilgileri itfaiyecilere iletti ve yangın kısa sürede söndürüldü. Robi, 'Yapay zeka, doğru ellerde olduğunda gerçek bir süper kahraman olabilir!' diye düşündü. Yapay zeka, doğal afetlerle mücadele etmek, enerji tasarrufu sağlamak ve hatta yeni ilaçlar geliştirmek gibi birçok alanda bize yardımcı olabilir. Önemli olan, onu her zaman iyi niyetle kullanmaktır.",
+                    svg: `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
+                            <circle cx="100" cy="100" r="80" fill="#38bdf8" opacity="0.1" />
+                            <circle cx="100" cy="100" r="60" fill="#a855f7" opacity="0.1" />
+                            <circle cx="100" cy="100" r="40" fill="#38bdf8" opacity="0.2" />
+                            <path d="M100 20 L120 40 L100 60 L80 40 Z" fill="#a855f7" />
+                            <path d="M100 180 L120 160 L100 140 L80 160 Z" fill="#a855f7" />
+                            <path d="M20 100 L40 120 L60 100 L40 80 Z" fill="#a855f7" />
+                            <path d="M180 100 L160 120 L140 100 L160 80 Z" fill="#a855f7" />
+                            <line x1="100" y1="60" x2="100" y2="140" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.5" />
+                            <line x1="60" y1="100" x2="140" y2="100" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.5" />
+                            <circle cx="100" cy="100" r="10" fill="#38bdf8" class="pulse" />
+                        </svg>
+                    `
                 }
-            } catch (error) {
-                console.error("Gemini API hatası:", error);
-                certificateMessage.textContent = translations[currentLanguage]['certificate_message_default'];
-            }
-        }
+            ];
 
-        function backToGameFromCertificate() {
-            certificateScreen.classList.add('hidden');
-            // Determine which screen to go back to based on progress
-            if (matchedPairs.size < totalMatchingPairs) {
-                matchingGameScreen.classList.remove('hidden');
-                currentSection = 'matching';
-            } else if (solvedRiddles.size < totalRiddles) {
+            // Riddles data - now with prompts for LLM
+            const riddles = [
+                {
+                    prompt: "Çocuklar için yapay zeka hakkında basit bir bilmece oluştur. Cevabı tek kelime olmalı.",
+                    answer: "yapay zeka"
+                },
+                {
+                    prompt: "Makine öğrenmesi kavramını anlatan bir bilmece yaz. Cevabı tek kelime olmalı.",
+                    answer: "makine öğrenmesi"
+                },
+                {
+                    prompt: "Robotların ne olduğunu anlatan, çocuklara yönelik bir bilmece oluştur. Cevabı tek kelime olmalı.",
+                    answer: "robot"
+                }
+            ];
+
+            // Matching game data (pairs of concept and description)
+            const matchingPairs = [
+                { id: 1, concept: "Yapay Zeka", description: "Bilgisayarların insanlar gibi düşünmesini sağlar." },
+                { id: 2, concept: "Makine Öğrenmesi", description: "Robotların deneyimlerden öğrenmesidir." },
+                { id: 3, concept: "Robot", description: "Yapay zeka ile çalışan bir makine." },
+                { id: 4, concept: "Algoritma", description: "Bir problemi çözmek için adım adım talimatlar." },
+                { id: 5, concept: "Veri", description: "Yapay zekanın öğrenmek için kullandığı bilgiler." },
+                { id: 6, concept: "Sensör", description: "Robotların çevreyi algılamasına yardımcı olan araç." }
+            ];
+
+            // Overall progress calculation
+            const totalLearningCards = aiConcepts.length;
+            const totalRiddles = riddles.length;
+            const totalMatchingPairs = matchingPairs.length; // Number of pairs
+            const overallTotalProgressItems = totalLearningCards + totalRiddles + totalMatchingPairs; // Each pair counts as one item for progress
+
+            // Function to generate random stars
+            function generateStars() {
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.width = `${Math.random() * 3 + 1}px`;
+                    star.style.height = star.style.width;
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    star.style.animationDelay = `${Math.random() * 2}s`;
+                    starsContainer.appendChild(star);
+                }
+            }
+
+            // Function to create confetti
+            function createConfetti() {
+                const confettiColors = ['#ff7e5f', '#feb47b', '#ffc700', '#a855f7', '#38bdf8', '#ef4444', '#22c55e'];
+                for (let i = 0; i < 100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.setProperty('--color', confettiColors[Math.floor(Math.random() * confettiColors.length)]);
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    confetti.style.top = `${Math.random() * 100}vh`;
+                    confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                    confetti.style.animationDuration = `${3 + Math.random() * 2}s`;
+                    document.body.appendChild(confetti);
+                    // Remove confetti after animation to prevent DOM bloat
+                    confetti.addEventListener('animationend', () => confetti.remove());
+                }
+            }
+
+            // Function to update overall progress bar and percentage
+            function updateOverallProgress() {
+                const currentProgress = knownCards.size + solvedRiddles.size + matchedPairs.size;
+                const progressPercentage = (currentProgress / overallTotalProgressItems) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+                progressPercent.textContent = Math.round(progressPercentage);
+                overallProgressCountDisplay.textContent = currentProgress;
+                overallTotalCountDisplay.textContent = overallTotalProgressItems;
+            }
+
+            // Function to update all text content based on current language
+            function updateTextContent() {
+                document.querySelectorAll('[data-lang-key]').forEach(element => {
+                    const key = element.dataset.langKey;
+                    if (translations[currentLanguage][key]) {
+                        element.textContent = translations[currentLanguage][key];
+                    }
+                });
+                document.querySelectorAll('[data-lang-placeholder-key]').forEach(element => {
+                    const key = element.dataset.langPlaceholderKey;
+                    if (translations[currentLanguage][key]) {
+                        element.placeholder = translations[currentLanguage][key];
+                    }
+                });
+                // Special handling for dynamic content that needs to be re-rendered
+                if (currentSection === 'learning') {
+                    updateLearningCard();
+                } else if (currentSection === 'riddles') {
+                    loadRiddle(); // Re-load riddle to get it in the correct language
+                }
+                // Update user name display if available
+                if (userNameDisplay.textContent) {
+                    userNameDisplay.textContent = userName;
+                }
+                if (certificateUserName.textContent) {
+                    certificateUserName.textContent = userName;
+                }
+            }
+
+            // --- Language Toggle Event Listeners ---
+            langToggleTr.addEventListener('click', () => {
+                currentLanguage = 'tr';
+                updateTextContent();
+                langToggleTr.classList.add('bg-gray-700');
+                langToggleEn.classList.remove('bg-gray-700');
+                playClickEffect();
+            });
+
+            langToggleEn.addEventListener('click', () => {
+                currentLanguage = 'en';
+                updateTextContent();
+                langToggleEn.classList.add('bg-gray-700');
+                langToggleTr.classList.remove('bg-gray-700');
+                playClickEffect();
+            });
+
+            // --- Learning Card Functions ---
+            function updateLearningCard() {
+                const card = aiConcepts[currentCardIndex];
+                cardFrontTitle.textContent = card.title;
+                cardFrontText.textContent = card.text;
+                cardFrontSvg.innerHTML = card.svg; // Set innerHTML for SVG
+                cardBackTitle.textContent = card.storyTitle;
+                cardBackText.textContent = card.storyText;
+                cardBadge.textContent = `${translations[currentLanguage]['concept']} #${currentCardIndex + 1}`;
+
+                // Reset card flip state
+                currentCardElement.classList.remove('flipped');
+
+                // Update button states
+                btnPrev.disabled = currentCardIndex === 0;
+                btnNext.disabled = currentCardIndex === aiConcepts.length - 1; // Always allow next for learning cards
+
+                // Enable/disable "Anladım" and "Tekrar" based on current card's state
+                btnKnown.disabled = knownCards.has(currentCardIndex);
+                btnUnknown.disabled = unknownCards.has(currentCardIndex); 
+
+                updateLearningStats();
+                updateOverallProgress();
+            }
+
+            function updateLearningStats() {
+                statsKnown.textContent = knownCards.size;
+                statsUnknown.textContent = unknownCards.size;
+                statsRemaining.textContent = aiConcepts.length - knownCards.size;
+            }
+
+            // --- Text-to-Speech Function ---
+            function speakStory() {
+                if (synth.speaking) {
+                    synth.cancel(); // Stop any ongoing speech
+                }
+                const textToSpeak = cardBackText.textContent;
+                speechUtterance = new SpeechSynthesisUtterance(textToSpeak);
+                speechUtterance.lang = currentLanguage === 'tr' ? 'tr-TR' : 'en-US';
+                
+                speechUtterance.onstart = () => {
+                    btnListenStory.disabled = true;
+                    btnListenStory.textContent = translations[currentLanguage]['listening_story_button'] || 'Dinleniyor...';
+                };
+                speechUtterance.onend = () => {
+                    btnListenStory.disabled = false;
+                    btnListenStory.textContent = translations[currentLanguage]['listen_story_button'];
+                };
+                speechUtterance.onerror = (event) => {
+                    console.error('SpeechSynthesisUtterance.onerror', event);
+                    btnListenStory.disabled = false;
+                    btnListenStory.textContent = translations[currentLanguage]['listen_story_button'];
+                };
+                synth.speak(speechUtterance);
+                playClickEffect();
+            }
+
+            // --- Robi AI Chat Function ---
+            async function askRobi() {
+                const question = robiQuestionInput.value.trim();
+                if (!question) {
+                    robiAnswer.textContent = translations[currentLanguage]['robi_no_question'];
+                    return;
+                }
+
+                robiAnswer.textContent = translations[currentLanguage]['robi_thinking'];
+                robiLoadingIndicator.classList.remove('hidden');
+                askRobiBtn.disabled = true;
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `A child is asking you a question about AI. Answer in a child-friendly, short, and concise way. The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}. Question: "${question}"` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        robiAnswer.textContent = text;
+                    } else {
+                        robiAnswer.textContent = translations[currentLanguage]['robi_api_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    robiAnswer.textContent = translations[currentLanguage]['robi_api_error'];
+                } finally {
+                    robiLoadingIndicator.classList.add('hidden');
+                    askRobiBtn.disabled = false;
+                    robiQuestionInput.value = '';
+                }
+            }
+
+            // --- AI Story Generator Function ---
+            async function generateAIStory() {
+                const keywords = storyKeywordsInput.value.trim();
+                if (!keywords) {
+                    storyText.textContent = translations[currentLanguage]['story_no_keywords'];
+                    return;
+                }
+
+                storyText.textContent = translations[currentLanguage]['story_loading'];
+                storyLoadingIndicator.classList.remove('hidden');
+                generateStoryBtn.disabled = true;
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly story (around 100-150 words) about AI, robots, or technology, incorporating the following keywords: "${keywords}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        storyText.textContent = text;
+                    } else {
+                        storyText.textContent = translations[currentLanguage]['story_api_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    storyText.textContent = translations[currentLanguage]['story_api_error'];
+                } finally {
+                    storyLoadingIndicator.classList.add('hidden');
+                    generateStoryBtn.disabled = false;
+                    // storyKeywordsInput.value = ''; // Keep keywords for easy re-generation
+                }
+            }
+
+            // --- "What Does This AI Do?" Scenario Generator Function ---
+            async function analyzeAIScenario() {
+                const scenario = scenarioInput.value.trim();
+                if (!scenario) {
+                    scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_no_input'];
+                    return;
+                }
+
+                scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_loading'];
+                scenarioLoadingIndicator.classList.remove('hidden');
+                analyzeScenarioBtn.disabled = true;
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Given the scenario: "${scenario}", describe in 2-3 sentences what AI might do or how it would be used in a child-friendly way. The explanation should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        scenarioAnalysisText.textContent = text;
+                    } else {
+                        scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_api_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    scenarioAnalysisText.textContent = translations[currentLanguage]['scenario_api_error'];
+                } finally {
+                    scenarioLoadingIndicator.classList.add('hidden');
+                    analyzeScenarioBtn.disabled = false;
+                    // scenarioInput.value = ''; // Keep scenario for easy re-analysis
+                }
+            }
+
+            // --- AI Fun Fact Generator Function ---
+            async function generateAIFunFact() {
+                funFactText.textContent = translations[currentLanguage]['fun_fact_loading'];
+                funFactLoadingIndicator.classList.remove('hidden');
+                generateFunFactBtn.disabled = true;
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Generate a short, interesting, and child-friendly fun fact about Artificial Intelligence or robots. The fact should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        funFactText.textContent = text;
+                    } else {
+                        funFactText.textContent = translations[currentLanguage]['fun_fact_api_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    funFactText.textContent = translations[currentLanguage]['fun_fact_api_error'];
+                } finally {
+                    funFactLoadingIndicator.classList.add('hidden');
+                    generateFunFactBtn.disabled = false;
+                }
+            }
+
+            // --- AI Invention Idea Generator Function ---
+            async function generateAIInventionIdea() {
+                const topic = inventionTopicInput.value.trim();
+                if (!topic) {
+                    inventionText.textContent = translations[currentLanguage]['invention_no_topic'];
+                    return;
+                }
+
+                inventionText.textContent = translations[currentLanguage]['invention_loading'];
+                inventionLoadingIndicator.classList.remove('hidden');
+                generateInventionBtn.disabled = true;
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Generate a creative and child-friendly idea for an AI invention related to "${topic}". Describe it in 2-3 sentences. The idea should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        inventionText.textContent = text;
+                    } else {
+                        inventionText.textContent = translations[currentLanguage]['invention_api_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    inventionText.textContent = translations[currentLanguage]['invention_api_error'];
+                } finally {
+                    inventionLoadingIndicator.classList.add('hidden');
+                    generateInventionBtn.disabled = false;
+                    // inventionTopicInput.value = ''; // Keep topic for easy re-generation
+                }
+            }
+
+
+            // --- Riddle Functions ---
+            async function showRiddleScreen() {
+                gameScreen.classList.add('hidden');
                 riddleScreen.classList.remove('hidden');
                 currentSection = 'riddles';
-            } else {
-                gameScreen.classList.remove('hidden');
-                currentSection = 'learning';
+                await loadRiddle(); // Await the riddle loading
+                playClickEffect();
             }
-            updateTextContent(); // Ensure text is updated on return
-        }
 
-        // --- Event Listeners ---
-        startAdventureBtn.addEventListener('click', () => {
-            userName = userNameInput.value.trim();
-            if (userName) {
-                welcomeScreen.classList.add('hidden');
-                gameScreen.classList.remove('hidden');
-                userNameDisplay.textContent = userName;
-                currentSection = 'learning';
-                updateLearningCard();
-                updateTextContent(); // Update text for game screen
-            } else {
-                // Using a custom message instead of alert for better UX
-                alert(translations[currentLanguage]['robi_no_question']); 
+            async function loadRiddle() {
+                riddleQuestion.textContent = translations[currentLanguage]['riddle_loading'];
+                riddleAnswerInput.value = '';
+                riddleFeedback.textContent = '';
+                riddleFeedback.className = 'text-center mt-4 font-bold';
+                riddleLoadingIndicator.classList.remove('hidden');
+                submitRiddleAnswerBtn.disabled = true;
+                btnPrevRiddle.disabled = true;
+                btnNextRiddle.disabled = true;
+
+                try {
+                    const riddleData = riddles[currentRiddleIndex];
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `${riddleData.prompt} The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const generatedRiddle = result.candidates[0].content.parts[0].text;
+                        riddleQuestion.textContent = generatedRiddle;
+                    } else {
+                        riddleQuestion.textContent = translations[currentLanguage]['riddle_load_error'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    riddleQuestion.textContent = translations[currentLanguage]['riddle_api_error'];
+                } finally {
+                    riddleLoadingIndicator.classList.add('hidden');
+                    submitRiddleAnswerBtn.disabled = solvedRiddles.has(currentRiddleIndex);
+                    btnPrevRiddle.disabled = currentRiddleIndex === 0;
+                    btnNextRiddle.disabled = currentRiddleIndex === riddles.length - 1 || !solvedRiddles.has(currentRiddleIndex);
+                    
+                    riddleCountDisplay.textContent = solvedRiddles.size;
+                    updateOverallProgress();
+
+                    if (solvedRiddles.size === totalRiddles) {
+                        btnNextRiddle.disabled = false;
+                        btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
+                        btnNextRiddle.removeEventListener('click', nextRiddle);
+                        btnNextRiddle.addEventListener('click', showMatchingGameScreen);
+                    } else {
+                        btnNextRiddle.textContent = translations[currentLanguage]['next_button'];
+                        btnNextRiddle.removeEventListener('click', showMatchingGameScreen);
+                        btnNextRiddle.addEventListener('click', nextRiddle);
+                    }
+                }
             }
-        });
 
-        currentCardElement.addEventListener('click', () => {
-            currentCardElement.classList.toggle('flipped');
-        });
+            function checkRiddleAnswer() {
+                const userAnswer = riddleAnswerInput.value.trim().toLowerCase();
+                const correctAnswer = riddles[currentRiddleIndex].answer.toLowerCase();
+                playClickEffect();
 
-        btnPrev.addEventListener('click', () => {
-            if (currentCardIndex > 0) {
-                currentCardIndex--;
-                updateLearningCard();
+                if (userAnswer === correctAnswer) {
+                    riddleFeedback.textContent = translations[currentLanguage]['riddle_correct'];
+                    riddleFeedback.classList.remove('text-red-400');
+                    riddleFeedback.classList.add('text-green-400');
+                    solvedRiddles.add(currentRiddleIndex);
+                    submitRiddleAnswerBtn.disabled = true;
+                    if (solvedRiddles.size === totalRiddles) {
+                        btnNextRiddle.disabled = false;
+                        btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
+                        btnNextRiddle.removeEventListener('click', nextRiddle);
+                        btnNextRiddle.addEventListener('click', showMatchingGameScreen);
+                    } else {
+                        btnNextRiddle.disabled = false; 
+                    }
+                } else {
+                    riddleFeedback.textContent = translations[currentLanguage]['riddle_incorrect'];
+                    riddleFeedback.classList.remove('text-green-400');
+                    riddleFeedback.classList.add('text-red-400');
+                    solvedRiddles.delete(currentRiddleIndex); 
+                    btnNextRiddle.disabled = true; 
+                }
+                riddleCountDisplay.textContent = solvedRiddles.size;
+                updateOverallProgress();
             }
-        });
 
-        btnNext.addEventListener('click', () => {
-            if (currentCardIndex < aiConcepts.length - 1) {
-                currentCardIndex++;
-                updateLearningCard();
-            } else if (knownCards.size === totalLearningCards) {
-                showRiddleScreen();
+            async function prevRiddle() {
+                playClickEffect();
+                if (currentRiddleIndex > 0) {
+                    currentRiddleIndex--;
+                    await loadRiddle();
+                }
             }
-        });
 
-        btnKnown.addEventListener('click', () => {
-            if (!knownCards.has(currentCardIndex)) {
-                knownCards.add(currentCardIndex);
-                unknownCards.delete(currentCardIndex); 
-                updateLearningCard(); 
-                // Removed: if (knownCards.size === totalLearningCards) {
-                // Removed:     btnComplete.classList.remove('hidden');
-                // Removed: }
+            async function nextRiddle() {
+                playClickEffect();
+                if (currentRiddleIndex < riddles.length - 1) {
+                    currentRiddleIndex++;
+                    await loadRiddle();
+                }
             }
-        });
 
-        btnUnknown.addEventListener('click', () => {
-            if (!unknownCards.has(currentCardIndex)) {
-                unknownCards.add(currentCardIndex);
-                knownCards.delete(currentCardIndex); 
-                updateLearningCard(); 
-                // Removed: btnComplete.classList.add('hidden'); 
+            // --- Matching Game Functions ---
+            function showMatchingGameScreen() {
+                gameScreen.classList.add('hidden');
+                riddleScreen.classList.add('hidden');
+                matchingGameScreen.classList.remove('hidden');
+                currentSection = 'matching';
+                initializeMatchingGame();
+                updateOverallProgress();
+                playClickEffect();
             }
-        });
 
-        btnReset.addEventListener('click', () => {
-            if (confirm(translations[currentLanguage]['confirm_reset'])) { 
-                knownCards.clear();
-                unknownCards.clear();
-                solvedRiddles.clear();
-                matchedPairs.clear();
-                currentCardIndex = 0;
-                currentRiddleIndex = 0;
-                currentSection = 'learning';
-                gameScreen.classList.remove('hidden');
+            function initializeMatchingGame() {
+                matchingGrid.innerHTML = ''; 
+                flippedCards = [];
+                lockBoard = false;
+                matchedPairs.clear(); 
+
+                const cards = [...matchingPairs.flatMap(pair => [
+                    { id: pair.id, text: pair.concept, type: 'concept' },
+                    { id: pair.id, text: pair.description, type: 'description' }
+                ])];
+
+                // Shuffle cards
+                cards.sort(() => Math.random() - 0.5);
+
+                cards.forEach((cardData, index) => {
+                    const cardElement = document.createElement('div');
+                    cardElement.classList.add('matching-card');
+                    cardElement.dataset.id = cardData.id;
+                    cardElement.dataset.type = cardData.type;
+                    cardElement.dataset.index = index; 
+
+                    cardElement.innerHTML = `
+                        <div class="card-face card-front-face">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z" />
+                            </svg>
+                        </div>
+                        <div class="card-face card-back-face">
+                            ${cardData.text}
+                        </div>
+                    `;
+                    cardElement.addEventListener('click', flipCard);
+                    matchingGrid.appendChild(cardElement);
+                });
+
+                matchingFeedback.textContent = '';
+                btnCompleteMatching.classList.add('hidden');
+                playClickEffect();
+            }
+
+            function flipCard() {
+                playClickEffect();
+                if (lockBoard) return;
+                if (this === flippedCards[0]) return; 
+
+                this.classList.add('flipped');
+                flippedCards.push(this);
+
+                if (flippedCards.length === 2) {
+                    lockBoard = true;
+                    checkForMatch();
+                }
+            }
+
+            function checkForMatch() {
+                const [firstCard, secondCard] = flippedCards;
+                const isMatch = firstCard.dataset.id === secondCard.dataset.id && firstCard.dataset.type !== secondCard.dataset.type;
+
+                if (isMatch) {
+                    disableCards();
+                    matchedPairs.add(parseInt(firstCard.dataset.id)); 
+                    matchingFeedback.textContent = translations[currentLanguage]['matching_matched'];
+                    matchingFeedback.classList.remove('text-red-400');
+                    matchingFeedback.classList.add('text-green-400');
+                } else {
+                    unflipCards();
+                    matchingFeedback.textContent = translations[currentLanguage]['matching_not_matched'];
+                    matchingFeedback.classList.remove('text-green-400');
+                    matchingFeedback.classList.add('text-red-400');
+                }
+                updateOverallProgress();
+                if (matchedPairs.size === totalMatchingPairs) {
+                    matchingFeedback.textContent = translations[currentLanguage]['matching_all_matched'];
+                    matchingFeedback.classList.remove('text-red-400');
+                    matchingFeedback.classList.add('text-green-400');
+                    btnCompleteMatching.classList.remove('hidden');
+                    createConfetti(); // Trigger confetti when all matching pairs are found
+                }
+            }
+
+            function disableCards() {
+                flippedCards.forEach(card => {
+                    card.removeEventListener('click', flipCard);
+                    card.classList.add('matched');
+                });
+                resetBoard();
+            }
+
+            function unflipCards() {
+                setTimeout(() => {
+                    flippedCards.forEach(card => {
+                        card.classList.remove('flipped');
+                    });
+                    resetBoard();
+                }, 1000);
+            }
+
+            function resetBoard() {
+                [flippedCards, lockBoard] = [[], false];
+            }
+
+            // --- Screen Transition Functions ---
+            async function showCertificateScreen() {
+                gameScreen.classList.add('hidden');
                 riddleScreen.classList.add('hidden');
                 matchingGameScreen.classList.add('hidden');
+                certificateScreen.classList.remove('hidden');
+                certificateUserName.textContent = userName;
+                certificateDate.textContent = new Date().toLocaleDateString(currentLanguage === 'tr' ? 'tr-TR' : 'en-US');
+                playClickEffect();
+
+                // Generate personalized certificate message
+                certificateMessage.textContent = translations[currentLanguage]['certificate_message_loading'];
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `A child named ${userName} completed the AI adventure. Write a 2-3 sentence, motivating, AI-themed congratulatory message for them. The message should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        certificateMessage.textContent = text;
+                    } else {
+                        certificateMessage.textContent = translations[currentLanguage]['certificate_message_default'];
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    certificateMessage.textContent = translations[currentLanguage]['certificate_message_default'];
+                }
+            }
+
+            function backToGameFromCertificate() {
+                playClickEffect();
                 certificateScreen.classList.add('hidden');
-                updateLearningCard();
-                updateTextContent(); // Ensure text is updated after reset
+                // Determine which screen to go back to based on progress
+                if (matchedPairs.size < totalMatchingPairs) {
+                    matchingGameScreen.classList.remove('hidden');
+                    currentSection = 'matching';
+                } else if (solvedRiddles.size < totalRiddles) {
+                    riddleScreen.classList.remove('hidden');
+                    currentSection = 'riddles';
+                } else {
+                    gameScreen.classList.remove('hidden');
+                    currentSection = 'learning';
+                }
+                updateTextContent(); // Ensure text is updated on return
             }
-        });
 
-        // Removed: btnComplete.addEventListener('click', showRiddleScreen); 
+            // --- Click Effect Function (Sound and Vibration) ---
+            function playClickEffect() {
+                // Play sound
+                clickSound.currentTime = 0; // Rewind to start
+                clickSound.play().catch(e => console.log("Audio play prevented:", e)); // Catch promise rejection
 
-        // Robi Chat Event Listeners
-        askRobiBtn.addEventListener('click', askRobi);
-        robiQuestionInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                askRobi();
+                // Vibrate (if supported)
+                if (navigator.vibrate) {
+                    navigator.vibrate(50); // Vibrate for 50ms
+                }
             }
-        });
 
-        // AI Story Generator Event Listeners
-        generateStoryBtn.addEventListener('click', generateAIStory);
-        storyKeywordsInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                generateAIStory();
+            // --- Event Listeners ---
+
+            // Initial Intro Flow
+            continueIntroBtn.addEventListener('click', () => {
+                playClickEffect();
+                initialIntroScreen.classList.add('hidden');
+                nameInputSection.classList.remove('hidden');
+            });
+
+            startAdventureBtn.addEventListener('click', () => {
+                playClickEffect();
+                userName = userNameInput.value.trim();
+                if (userName) {
+                    welcomeScreen.classList.add('hidden');
+                    gameScreen.classList.remove('hidden');
+                    userNameDisplay.textContent = userName;
+                    currentSection = 'learning';
+                    updateLearningCard();
+                    updateTextContent(); // Update text for game screen
+                } else {
+                    // Using a custom message instead of alert for better UX
+                    alert(translations[currentLanguage]['robi_no_question']); 
+                }
+            });
+
+            currentCardElement.addEventListener('click', () => {
+                playClickEffect();
+                currentCardElement.classList.toggle('flipped');
+            });
+
+            btnListenStory.addEventListener('click', speakStory); // New: Listen Story button event listener
+
+            btnPrev.addEventListener('click', () => {
+                playClickEffect();
+                if (currentCardIndex > 0) {
+                    currentCardIndex--;
+                    updateLearningCard();
+                }
+            });
+
+            btnNext.addEventListener('click', () => {
+                playClickEffect();
+                if (currentCardIndex < aiConcepts.length - 1) {
+                    currentCardIndex++;
+                    updateLearningCard();
+                } else if (knownCards.size === totalLearningCards) {
+                    showRiddleScreen();
+                }
+            });
+
+            btnKnown.addEventListener('click', () => {
+                playClickEffect();
+                if (!knownCards.has(currentCardIndex)) {
+                    knownCards.add(currentCardIndex);
+                    unknownCards.delete(currentCardIndex); 
+                    updateLearningCard(); 
+                }
+            });
+
+            btnUnknown.addEventListener('click', () => {
+                playClickEffect();
+                if (!unknownCards.has(currentCardIndex)) {
+                    unknownCards.add(currentCardIndex);
+                    knownCards.delete(currentCardIndex); 
+                    updateLearningCard(); 
+                }
+            });
+
+            btnReset.addEventListener('click', () => {
+                playClickEffect();
+                if (confirm(translations[currentLanguage]['confirm_reset'])) { 
+                    knownCards.clear();
+                    unknownCards.clear();
+                    solvedRiddles.clear();
+                    matchedPairs.clear();
+                    currentCardIndex = 0;
+                    currentRiddleIndex = 0;
+                    currentSection = 'intro'; // Go back to intro screen on full reset
+                    welcomeScreen.classList.remove('hidden');
+                    initialIntroScreen.classList.remove('hidden'); // Show initial intro
+                    nameInputSection.classList.add('hidden'); // Hide name input
+                    gameScreen.classList.add('hidden');
+                    riddleScreen.classList.add('hidden');
+                    matchingGameScreen.classList.add('hidden');
+                    certificateScreen.classList.add('hidden');
+                    updateLearningCard(); // This will reset card display
+                    updateOverallProgress(); // This will reset progress display
+                    updateTextContent(); // Ensure text is updated after reset
+                }
+            });
+
+            // Robi Chat Event Listeners
+            askRobiBtn.addEventListener('click', askRobi);
+            robiQuestionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    askRobi();
+                }
+            });
+
+            // AI Story Generator Event Listeners
+            generateStoryBtn.addEventListener('click', generateAIStory);
+            storyKeywordsInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    generateAIStory();
+                }
+            });
+
+            // "What Does This AI Do?" Scenario Generator Event Listeners
+            analyzeScenarioBtn.addEventListener('click', analyzeAIScenario);
+            scenarioInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    analyzeAIScenario();
+                }
+            });
+
+            // AI Fun Fact Generator Event Listener
+            generateFunFactBtn.addEventListener('click', generateAIFunFact);
+
+            // AI Invention Idea Generator Event Listener
+            generateInventionBtn.addEventListener('click', generateAIInventionIdea);
+            inventionTopicInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    generateAIInventionIdea();
+                }
+            });
+
+            // Riddle Screen Event Listeners
+            submitRiddleAnswerBtn.addEventListener('click', checkRiddleAnswer);
+            riddleAnswerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkRiddleAnswer();
+                }
+            });
+            btnPrevRiddle.addEventListener('click', prevRiddle);
+            btnNextRiddle.addEventListener('click', nextRiddle); 
+
+            // Matching Game Event Listeners
+            btnResetMatching.addEventListener('click', initializeMatchingGame);
+            btnCompleteMatching.addEventListener('click', showCertificateScreen);
+
+            // Certificate screen button event listeners
+            if (btnBackToGame) {
+                btnBackToGame.addEventListener('click', backToGameFromCertificate);
+            } else {
+                console.error('Error: btn-back-to-game element not found!');
             }
-        });
-
-        // "What Does This AI Do?" Scenario Generator Event Listeners
-        analyzeScenarioBtn.addEventListener('click', analyzeAIScenario);
-        scenarioInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                analyzeAIScenario();
+            if (btnPrintCertificate) {
+                btnPrintCertificate.addEventListener('click', () => {
+                    playClickEffect();
+                    window.print();
+                });
+            } else {
+                console.error('Error: btn-print-certificate element not found!');
             }
+
+
+            // Initial setup
+            generateStars();
+            updateOverallProgress(); 
+            updateTextContent(); // Call initially to set default language texts
+            langToggleTr.classList.add('bg-gray-700'); // Highlight default language button
+            initialIntroScreen.classList.remove('hidden'); // Ensure initial intro is visible
+            nameInputSection.classList.add('hidden'); // Ensure name input is hidden initially
         });
-
-        // New: AI Fun Fact Generator Event Listener
-        generateFunFactBtn.addEventListener('click', generateAIFunFact);
-
-        // New: AI Invention Idea Generator Event Listener
-        generateInventionBtn.addEventListener('click', generateAIInventionIdea);
-        inventionTopicInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                generateAIInventionIdea();
-            }
-        });
-
-        // Riddle Screen Event Listeners
-        submitRiddleAnswerBtn.addEventListener('click', checkRiddleAnswer);
-        riddleAnswerInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkRiddleAnswer();
-            }
-        });
-        btnPrevRiddle.addEventListener('click', prevRiddle);
-        btnNextRiddle.addEventListener('click', nextRiddle); 
-
-        // Matching Game Event Listeners
-        btnResetMatching.addEventListener('click', initializeMatchingGame);
-        btnCompleteMatching.addEventListener('click', showCertificateScreen);
-
-        btnBackToGame.addEventListener('click', backToGameFromCertificate);
-        btnPrintCertificate.addEventListener('click', () => {
-            window.print();
-        });
-
-        // Initial setup
-        generateStars();
-        updateOverallProgress(); 
-        updateTextContent(); // Call initially to set default language texts
-        langToggleTr.classList.add('bg-gray-700'); // Highlight default language button
     </script>
 </body>
 </html>
