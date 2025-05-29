@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapay Zeka Öğreniyorum!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhai+2:wght@400;600;700&family=Fredoka:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Freckle+Face&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Baloo Bhai 2', cursive; /* Default font for body text */
+            /* Yeni mor tonlarında arka plan */
+            background: linear-gradient(135deg, #4A148C, #6A1B9A, #8E24AA); /* Koyu mor, orta mor, açık mor */
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Allow content to stack vertically */
+            justify-content: space-between; /* Push footer to bottom */
+            align-items: center;
+            padding: 1rem;
+            color: white; /* Paragraf yazıları beyaz */
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .main-container {
+            background-color: transparent; /* İçerik alanı için tamamen şeffaf arka plan */
+            box-shadow: none; /* Gölge kaldırıldı */
+            border-radius: 3rem; /* Even more rounded */
+            padding: 2.5rem; /* More padding */
+            max-width: 4xl;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.5rem; /* More space between sections */
+            color: white; /* İçerik alanındaki yazılar için beyaz */
+        }
+
+        /* Header section p tag needs to be white */
+        #header-section p {
+            color: white;
+        }
+        /* User name display within the header p tag should remain blue */
+        #header-section p #user-name-display {
+            color: #60A5FA; /* Tailwind blue-400 */
+        }
+
+
+        .card {
+            perspective: 1000px;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 2.5rem; /* More rounded card corners */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Slightly more prominent shadow for cards */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2.5rem; /* More padding in cards */
+            color: white; /* Kartlardaki metin rengi */
+            text-shadow: none; /* No text shadow for flat design */
+            /* Removed border */
+        }
+        
+        .card-front {
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card-back {
+            background-size: cover;
+            background-position: center;
+            transform: rotateY(180deg);
+        }
+        
+        .progress-bar {
+            height: 25px; /* Thicker progress bar */
+            border-radius: 12.5px;
+            background-color: rgba(0, 0, 0, 0.1); /* Lighter progress bar background */
+            overflow: hidden;
+            box-shadow: none; /* No shadow */
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #FFEA00, #FFD700); /* Sarı tonlarında ilerleme çubuğu */
+            transition: width 0.5s ease;
+            box-shadow: none; /* No shadow for flat design */
+        }
+        
+        .btn {
+            transition: all 0.2s ease-in-out; /* Faster, smoother transition */
+            position: relative;
+            overflow: hidden;
+            background-color: #FFEA00; /* Sarı buton rengi */
+            color: #333; /* Koyu gri metin rengi */
+            font-weight: bold;
+            padding: 1.3rem 3.5rem; /* Larger horizontal padding for oval shape */
+            border-radius: 9999px; /* Fully rounded for pill shape */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25); /* More prominent, soft shadow */
+            text-shadow: none; /* No text shadow for flat design */
+            display: inline-flex; /* For icon alignment */
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem; /* More space between text and icon */
+            border: 2px solid transparent; /* For hover effect */
+            font-size: 1.4rem; /* Larger font size for buttons */
+        }
+        
+        .btn:after {
+            content: ''; /* Removed shimmer effect for flat design */
+        }
+        
+        .btn:hover {
+            transform: translateY(-4px); /* Slight lift on hover */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); /* More prominent shadow on hover */
+            background-color: #FFD700; /* Hover rengi */
+            border-color: #FFEA00; /* Subtle border on hover */
+        }
+        
+        .btn:active {
+            transform: translateY(0); /* No translate on active */
+            background-color: #FFD700; /* Darker yellow on active */
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.4); /* More noticeable inner shadow for press effect */
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 18px; /* Larger confetti */
+            height: 18px; /* Larger confetti */
+            background-color: #f00; /* Will be set dynamically */
+            animation: fall 3s ease-out forwards;
+            border-radius: 50%; /* Make confetti round */
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(1000px) rotate(720deg); opacity: 0; }
+        }
+        
+        .icon-container {
+            font-size: 7rem; /* Even larger icons for 5-year-olds */
+            margin-bottom: 2.5rem; /* More space */
+            color: white; /* Single color for Font Awesome icons */
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.4)); /* More prominent shadow for icons */
+            animation: pulse 2s infinite;
+            transition: transform 0.3s ease;
+        }
+        .icon-container:hover {
+            transform: scale(1.12); /* More aggressive scale on hover */
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.12); } /* More noticeable pulse */
+            100% { transform: scale(1); }
+        }
+        
+        .certificate {
+            background: #E1F5FE; /* Very light blue for certificate */
+            /* Removed border: 4px solid #81D4FA; */
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+            color: #263238; /* Dark text for certificate */
+            border-radius: 2rem; /* Rounded corners */
+        }
+        
+        .certificate::before, .certificate::after {
+            content: "⭐"; /* Use emoji star for more playfulness */
+            position: absolute;
+            color: #FFC107; /* Amber star */
+            font-size: 40px; /* Larger stars */
+        }
+        .certificate::before { top: 15px; left: 15px; }
+        .certificate::after { top: 15px; right: 15px; }
+        
+        .badge {
+            display: inline-block;
+            background: #BBDEFB; /* Light blue badge */
+            color: #263238; /* Dark text for badge */
+            border-radius: 9999px;
+            padding: 0.4rem 1rem; /* Larger badges */
+            font-size: 0.9rem; /* Slightly larger font */
+            font-weight: bold;
+            margin-right: 0.7rem;
+            margin-bottom: 0.7rem;
+            box-shadow: none; /* No shadow for flat design */
+            text-shadow: none; /* No text shadow */
+        }
+        
+        .card-number {
+            position: absolute;
+            top: 20px; /* Slightly inward */
+            left: 20px; /* Slightly inward */
+            background-color: rgba(0, 0, 0, 0.25); /* Darker, more prominent background */
+            border-radius: 50%;
+            width: 50px; /* Larger number bubble */
+            height: 50px; /* Larger number bubble */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            font-family: 'Baloo Bhai 2', cursive; /* Keep consistent with body font */
+            font-size: 1.4rem; /* Larger font for number */
+        }
+
+        /* Use Fredoka for h2, h3, card titles, certificate titles */
+        h2, h3, .card-front h2, .card-back h2, .certificate h2, .certificate h3 {
+            font-family: 'Fredoka', cursive;
+        }
+        /* Use Baloo Bhai 2 for h1 for better Turkish character support */
+        h1 {
+            font-family: 'Baloo Bhai 2', cursive; /* Freckle Face yerine Baloo Bhai 2 kullanıldı */
+            color: #FFEA00; /* h1 ler sarı olsun */
+        }
+        /* Baloo Bhai 2 for card numbers and playful elements */
+        .card-number {
+            font-family: 'Baloo Bhai 2', cursive;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .card-container {
+                height: 350px; /* Adjust height for smaller screens */
+            }
+            .card-front, .card-back {
+                padding: 1.5rem;
+            }
+            .icon-container {
+                font-size: 4rem;
+            }
+            .card-number {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+                top: 10px;
+                left: 10px;
+            }
+            .certificate h2 {
+                font-size: 1.8rem;
+            }
+            .certificate h3 {
+                font-size: 1.4rem;
+            }
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* New button layout for controls-section */
+        #controls-section {
+            display: flex;
+            justify-content: space-between; /* Pushes prev/next to ends */
+            align-items: center;
+            gap: 0.5rem; /* Smaller gap for mobile */
+            padding: 0 1rem; /* Add some padding to the sides */
+            width: 100%;
+        }
+
+        #controls-section .btn {
+            flex-grow: 1; /* Allows buttons to grow and fill space */
+            max-width: 30%; /* Limit individual button width to prevent excessive stretching */
+            padding: 1rem 1.5rem; /* Adjusted padding */
+            font-size: 1.2rem; /* Adjusted font size */
+        }
+
+        #controls-section #learned-btn {
+            flex-grow: 2; /* Make the middle button a bit wider */
+            max-width: 40%;
+        }
+
+        @media (max-width: 768px) {
+            #controls-section {
+                gap: 0.25rem; /* Even smaller gap on very small screens */
+                padding: 0 0.5rem;
+            }
+            #controls-section .btn {
+                padding: 0.6rem 0.8rem; /* Smaller padding on mobile */
+                font-size: 1rem; /* Smaller font on mobile */
+                min-width: 30%; /* Ensure they don't shrink too much */
+            }
+            #controls-section #learned-btn {
+                min-width: 35%;
+            }
+        }
+
+        /* Loading spinner styles */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #FFEA00; /* Sarı loader */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Darker overlay for flat design */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #F8F8F8; /* Light grey/white for modal content */
+            margin: auto;
+            padding: 35px; /* More padding */
+            border-radius: 2.5rem; /* More rounded */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* More prominent shadow */
+            max-width: 90%; /* Slightly wider */
+            max-height: 90%; /* Slightly taller */
+            overflow-y: auto;
+            position: relative;
+            color: #263238; /* Dark text for modal */
+            font-size: 1.2rem; /* Larger text in modals */
+        }
+
+        .close-button {
+            color: #FFEA00; /* Sarı kapatma butonu */
+            float: right;
+            font-size: 40px; /* Larger close button */
+            font-weight: bold;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #FFD700; /* Koyu sarı hover */
+            text-decoration: none;
+        }
+
+        .quiz-option-btn {
+            background-color: #FFEA00; /* Sarı quiz seçenekleri */
+            color: #333;
+            font-size: 1.1rem; /* Larger font for options */
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.2s;
+        }
+        .quiz-option-btn:hover {
+            background-color: #FFD700;
+        }
+        .quiz-option-btn.bg-green-500 {
+            background-color: #4CAF50 !important; /* Force green for correct */
+            color: white !important;
+        }
+        .quiz-option-btn.bg-red-500 {
+            background-color: #F44336 !important; /* Force red for incorrect */
+            color: white !important;
+        }
+
+        .footer {
+            margin-top: 2rem; /* Adjusted margin */
+            padding: 1.5rem 1rem; /* Added horizontal padding */
+            text-align: center;
+            background-color: #311B92; /* Koyu mor footer */
+            color: white; /* Beyaz metin */
+            font-family: 'Open Sans', sans-serif; /* Open Sans for footer */
+            font-size: 0.875rem;
+            width: 100%; /* Full width footer */
+            border-top-left-radius: 1.5rem; /* Rounded corners for footer */
+            border-top-right-radius: 1.5rem;
+        }
+        .footer a {
+            color: #B39DDB; /* Lighter purple for links */
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="font-baloo-bhai-2">
+    <div class="main-container">
+        <div class="language-switch">
+            <label for="lang-toggle" id="lang-label-tr">Türkçe</label>
+            <label class="switch">
+                <input type="checkbox" id="lang-toggle">
+                <span class="slider"></span>
+            </label>
+            <label for="lang-toggle" id="lang-label-en">English</label>
+        </div>
+
+        <div id="welcome-screen" class="w-full text-center flex flex-col items-center gap-6 p-8 rounded-3xl shadow-lg bg-white hidden">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-4 text-blue-600">Hoş Geldin Minik Kaşif! 👋</h2>
+            <p class="text-xl md:text-2xl font-semibold mb-6 text-gray-700">Maceraya başlamadan önce adını bize söyler misin?</p>
+            <input type="text" id="child-name-input" class="w-full max-w-sm p-4 rounded-xl border-2 border-blue-300 focus:border-blue-500 outline-none text-center text-xl font-semibold" placeholder="Adın ne?">
+            <button id="start-learning-btn" class="btn bg-blue-500 text-white hover:bg-blue-400">
+                Başla! <i class="fas fa-play"></i>
+            </button>
+        </div>
+
+        <div id="main-app-content" class="w-full flex flex-col items-center gap-8 hidden">
+            <div id="header-section" class="w-full text-center">
+                <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+                    Yapay Zeka Öğreniyorum!
+                </h1>
+                <p class="text-xl md:text-2xl font-semibold mb-6">
+                    Merhaba <span id="user-name-display" class="text-blue-600">Minik Kaşif</span>! Kartları çevir, bilmeceleri çöz, test ol ve eğlen!
+                </p>
+                <div class="progress-bar w-full max-w-md mx-auto">
+                    <div id="progress" class="progress" style="width: 0%;"></div>
+                </div>
+                <p id="progress-text" class="text-md mt-3 font-semibold">İlerleme: 0/16</p>
+            </div>
+
+            <div id="card-section" class="w-full max-w-md h-96 relative flex justify-center items-center">
+                <div id="flashcard" class="card w-full h-full cursor-pointer rounded-3xl">
+                    <div class="card-inner">
+                        <div id="card-front" class="card-front">
+                            <div class="card-number" id="front-card-number">1</div>
+                            <div class="icon-container" id="front-icon"><i class="fas fa-robot"></i></div>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-4" id="front-title">Yapay Zeka</h2>
+                            <p class="text-2xl md:text-3xl font-medium" id="front-text">Akıllı bilgisayarlar!</p>
+                        </div>
+                        <div id="card-back" class="card-back">
+                            <div class="card-number" id="back-card-number">1</div>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-4" id="back-title">Yapay Zeka Nedir?</h2>
+                            <p class="text-2xl md:text-3xl font-medium" id="back-text">Bilgisayarların insanlar gibi düşünmesini, öğrenmesini ve oyun oynamasını sağlayan sihirli bir teknoloji!</p>
+                            <button id="tell-concept-story-btn" class="btn">
+                                Hikayesini Anlat ✨
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls-section" class="w-full flex justify-between items-center gap-2 md:gap-4 px-4">
+                <button id="prev-btn" class="btn flex-1 max-w-[120px] md:max-w-none">
+                    <i class="fas fa-arrow-left"></i> <span class="hidden md:inline"></span>
+                </button>
+                <button id="learned-btn" class="btn flex-1 max-w-[180px] md:max-w-none">
+                    <i class="fas fa-check"></i> Öğrendim!
+                </button>
+                <button id="next-btn" class="btn flex-1 max-w-[120px] md:max-w-none">
+                    <i class="fas fa-arrow-right"></i> <span class="hidden md:inline"></span>
+                </button>
+            </div>
+        </div>
+
+        <div id="certificate-section" class="hidden w-full max-w-md bg-white p-8 rounded-3xl shadow-2xl text-center flex flex-col items-center gap-6">
+            <h2 class="text-5xl font-extrabold text-pink-500">Tebrikler! 🎉</h2>
+            <p class="text-2xl font-semibold text-gray-700">Yapay zeka temel kavramlarını öğrendin!</p>
+            
+            <div class="certificate w-full p-8 mt-4">
+                <h3 class="text-4xl font-bold text-pink-600">Başarı Sertifikası</h3>
+                <p class="text-xl text-gray-800 mb-2">Bu sertifika</p>
+                <p class="text-5xl font-extrabold text-pink-700">Yapay Zeka Uzmanı</p>
+                <p class="text-xl text-gray-800 mb-6">unvanını kazandığını gösterir</p>
+                
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <span class="badge">Yapay Zeka</span>
+                    <span class="badge">Makine Öğrenmesi</span>
+                    <span class="badge">Robotlar</span>
+                    <span class="badge">Sohbet Botları</span>
+                    <span class="badge">Görüntü Tanıma</span>
+                    <span class="badge">Doğal Dil İşleme</span>
+                    <span class="badge">Veri</span>
+                    <span class="badge">Algoritma</span>
+                    <span class="badge">Eğitim</span>
+                    <span class="badge">Tahmin</span>
+                    <span class="badge">Otomasyon</span>
+                    <span class="badge">Akıllı Evler</span>
+                    <span class="badge">Sürücüsüz Arabalar</span>
+                    <span class="badge">Oyunlarda Yapay Zeka</span>
+                    <span class="badge">Sanatta Yapay Zeka</span>
+                    <span class="badge">Yapay Zeka Etiği</span>
+                </div>
+
+                <p id="certificate-date" class="text-lg font-semibold text-gray-600">Tarih: </p>
+            </div>
+            
+            <button id="generate-story-btn" class="btn">
+                Yapay Zeka Hikayesi Oluştur ✨
+            </button>
+            <button id="generate-riddle-btn" class="btn mt-2">
+                Yapay Zeka Bilmecesi Oluştur ✨
+            </button>
+            <button id="generate-quiz-btn" class="btn mt-2">
+                Bana Soru Sor! ✨
+            </button>
+            <button id="generate-song-btn" class="btn mt-2">
+                Yapay Zeka Şarkısı Oluştur ✨
+            </button>
+            <button id="generate-drawing-btn" class="btn mt-2">
+                Yapay Zeka Çizim Fikri Oluştur ✨
+            </button>
+            <button id="generate-joke-btn" class="btn mt-2">
+                Yapay Zeka Şakası ✨
+            </button>
+            <button id="ask-ai-btn" class="btn mt-2">
+                Yapay Zekaya Sor ✨
+            </button>
+            <button id="restart-btn" class="btn mt-2">
+                Tekrar Başla
+            </button>
+        </div>
+
+        <div id="aiStoryModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeStoryModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Hikayesi</h3>
+                <div id="story-loader" class="loader hidden"></div>
+                <p id="ai-story-text" class="text-xl text-gray-700 text-left"></p>
+                <div class="flex justify-center mt-4">
+                    <button id="play-ai-story-btn" class="btn bg-blue-500 text-white mr-2">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="pause-ai-story-btn" class="btn bg-red-500 text-white hidden">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="conceptStoryModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeConceptStoryModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Kavram Hikayesi</h3>
+                <div id="concept-story-loader" class="loader hidden"></div>
+                <p id="concept-story-text" class="text-xl text-gray-700 text-left"></p>
+                <div class="flex justify-center mt-4">
+                    <button id="play-concept-story-btn" class="btn bg-blue-500 text-white mr-2">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="pause-concept-story-btn" class="btn bg-red-500 text-white hidden">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="riddleModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeRiddleModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Bilmecesi</h3>
+                <div id="riddle-loader" class="loader hidden"></div>
+                <p id="riddle-text" class="text-xl text-gray-700 text-left mb-6"></p>
+                <div id="riddle-options-container" class="flex flex-col gap-3">
+                    </div>
+                <p id="riddle-feedback" class="text-center mt-4 text-xl font-semibold"></p>
+            </div>
+        </div>
+
+        <div id="quizModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeQuizModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Testi!</h3>
+                <div id="quiz-loader" class="loader hidden"></div>
+                <p id="quiz-question" class="text-xl text-gray-700 text-left mb-6"></p>
+                <div id="quiz-options-container" class="flex flex-col gap-3">
+                    </div>
+                <p id="quiz-feedback" class="text-center mt-4 text-xl font-semibold"></p>
+                <button id="next-quiz-btn" class="btn mt-4">Sonraki Soru</button>
+            </div>
+        </div>
+
+        <div id="songModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeSongModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Şarkısı! 🎶</h3>
+                <div id="song-loader" class="loader hidden"></div>
+                <p id="ai-song-text" class="text-xl text-gray-700 text-center whitespace-pre-line"></p>
+            </div>
+        </div>
+
+        <div id="drawingIdeaModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeDrawingIdeaModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Çizim Fikri! 🎨</h3>
+                <div id="drawing-loader" class="loader hidden"></div>
+                <p id="ai-drawing-idea-text" class="text-xl text-gray-700 text-center"></p>
+            </div>
+        </div>
+
+        <div id="aiJokeModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeJokeModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zeka Şakası! 😂</h3>
+                <div id="joke-loader" class="loader hidden"></div>
+                <p id="ai-joke-text" class="text-xl text-gray-700 text-center"></p>
+            </div>
+        </div>
+
+        <div id="askAiModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeAskAiModal">&times;</span>
+                <h3 class="text-3xl font-bold mb-4 text-center text-pink-600">Yapay Zekaya Sor! 🤔</h3>
+                <div id="ask-ai-loader" class="loader hidden"></div>
+                <div class="flex flex-col gap-4">
+                    <textarea id="ai-question-input" class="w-full p-4 rounded-xl border-2 border-gray-300 focus:border-blue-400 outline-none text-lg" rows="3" placeholder="Yapay zekaya bir soru sor..."></textarea>
+                    <button id="submit-ai-question-btn" class="btn bg-blue-500 text-white hover:bg-blue-400">
+                        Sor!
+                    </button>
+                </div>
+                <p id="ai-answer-text" class="text-xl text-gray-700 text-left mt-6"></p>
+            </div>
+        </div>
+
+        <div id="customAlertModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" id="closeCustomAlert">&times;</span>
+                <p id="customAlertMessage" class="text-xl text-gray-700 text-center"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer w-full max-w-4xl">
+        <p id="footer-text-1">Bu sayfada yer alan bilgiler, kaynak gösterilen içeriklerden derlenmiştir. Sertifikanın yasal bir geçerliliği yoktur, sadece eğitim amacıyla ve kar gütmeden hazırlanmıştır.</p>
+        <p id="footer-text-2" class="mt-2">Semanur Ayyıldız</p>
+        <p id="footer-text-3">Görsel İletişim Tasarımı ve Dijital Dönüşüm Uzmanı</p>
+        <p><a href="https://linkedin.com/in/semayy" target="_blank">linkedin.com/in/semayy</a></p>
+        <p id="footer-text-4" class="mt-2">© 2025 Çocuklar İçin Yapay Zeka Eğitimi. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables (provided by Canvas)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let userName = "Minik Kaşif"; // Default name
+
+        // Data for the flashcards - Simplified for 5-year-olds and updated for tech theme colors
+        const cardsDataTR = [
+            {
+                frontTitle: "Yapay Zeka",
+                frontText: "Akıllı bilgisayarlar!",
+                frontIcon: "fas fa-robot",
+                backTitle: "Yapay Zeka Nedir?",
+                backText: "Bilgisayarların insanlar gibi düşünmesini, öğrenmesini ve oyun oynamasını sağlayan sihirli bir teknoloji!",
+                bgColor: "bg-blue-600"
+            },
+            {
+                frontTitle: "Makine Öğrenmesi",
+                frontText: "Bilgisayar öğrenir!",
+                frontIcon: "fas fa-brain",
+                backTitle: "Makine Öğrenmesi Nedir?",
+                backText: "Bilgisayarların resimlerden veya seslerden yeni şeyler öğrenmesi. Tıpkı senin oyun öğrenmen gibi!",
+                bgColor: "bg-purple-600"
+            },
+            {
+                frontTitle: "Robotlar",
+                frontText: "Yardımcı arkadaşlar!",
+                frontIcon: "fas fa-hands-helping",
+                backTitle: "Robotlar Ne İşe Yarar?",
+                backText: "Ev işlerinde, fabrikalarda veya uzayda bize yardım eden akıllı makineler. Bazen de sadece dans ederler!",
+                bgColor: "bg-green-600"
+            },
+            {
+                frontTitle: "Sohbet Botları",
+                frontText: "Konuşan bilgisayar!",
+                frontIcon: "fas fa-comments",
+                backTitle: "Sohbet Botları Ne Yapar?",
+                backText: "Seninle telefonda veya bilgisayarda konuşabilen akıllı programlar. Sorularını cevaplar veya sana komik hikayeler anlatır!",
+                bgColor: "bg-indigo-600"
+            },
+            {
+                frontTitle: "Görüntü Tanıma",
+                frontText: "Bilgisayar görüyor!",
+                frontIcon: "fas fa-eye",
+                backTitle: "Görüntü Tanıma Nasıl Çalışır?",
+                backText: "Bilgisayarın resimlerdeki kedileri, köpekleri veya senin yüzünü tanıması gibi. Tıpkı senin arkadaşlarını tanıman gibi!",
+                bgColor: "bg-teal-600"
+            },
+            {
+                frontTitle: "Doğal Dil İşleme",
+                frontText: "Bilgisayar seni anlıyor!",
+                frontIcon: "fas fa-volume-up",
+                backTitle: "Doğal Dil İşleme Nedir?",
+                backText: "Bilgisayarın senin konuştuğun veya yazdığın dili anlaması. Bu sayede sesli asistanlar seninle konuşabilir!",
+                bgColor: "bg-cyan-600"
+            },
+            {
+                frontTitle: "Veri",
+                frontText: "Bilgisayarın yiyeceği!",
+                frontIcon: "fas fa-database",
+                backTitle: "Veri Neden Önemli?",
+                backText: "Yapay zekanın öğrenmesi için ihtiyaç duyduğu tüm bilgilerdir. Tıpkı senin kitaplardan öğrendiğin gibi, yapay zeka da verilerden öğrenir!",
+                bgColor: "bg-emerald-600"
+            },
+            {
+                frontTitle: "Algoritma",
+                frontText: "Bilgisayarın tarifi!",
+                frontIcon: "fas fa-list-ol",
+                backTitle: "Algoritma Nedir?",
+                backText: "Bir görevi tamamlamak için adım adım izlenen talimatlar dizisidir. Tıpkı bir kek tarifi gibi, yapay zeka da bu adımları takip eder!",
+                bgColor: "bg-fuchsia-600"
+            },
+            {
+                frontTitle: "Eğitim (Training)",
+                frontText: "Bilgisayar ders çalışıyor!",
+                frontIcon: "fas fa-chalkboard-teacher",
+                backTitle: "Yapay Zeka Nasıl Eğitilir?",
+                backText: "Yapay zekaya çok sayıda örnek gösterilerek yeni şeyler öğretilir. Tıpkı senin okulda ders çalışman gibi!",
+                bgColor: "bg-rose-600"
+            },
+            {
+                frontTitle: "Tahmin (Prediction)",
+                frontText: "Ne olacağını biliyor!",
+                frontIcon: "fas fa-lightbulb",
+                backTitle: "Yapay Zeka Nasıl Tahmin Yapar?",
+                backText: "Öğrendiği bilgilere bakarak gelecekte ne olabileceğini veya bir şeyin ne olduğunu tahmin eder. Hava durumu tahmini gibi!",
+                bgColor: "bg-lime-600"
+            },
+            {
+                frontTitle: "Otomasyon",
+                frontText: "Kendi kendine yapıyor!",
+                frontIcon: "fas fa-cogs",
+                backTitle: "Otomasyon Nedir?",
+                backText: "Yapay zekanın işleri insanlara ihtiyaç duymadan kendi başına yapmasıdır. Fabrikalardaki robot kollarını düşün!",
+                bgColor: "bg-sky-600"
+            },
+            {
+                frontTitle: "Akıllı Evler",
+                frontText: "Yardımcı evler!",
+                frontIcon: "fas fa-home",
+                backTitle: "Akıllı Evler Nasıl Çalışır?",
+                backText: "Yapay zeka ile çalışan evler, ışıkları açar, müziği çalar veya kapıyı kilitler. Senin için her şeyi kolaylaştırır!",
+                bgColor: "bg-violet-600"
+            },
+            {
+                frontTitle: "Sürücüsüz Arabalar",
+                frontText: "Kendi giden arabalar!",
+                frontIcon: "fas fa-car",
+                backTitle: "Sürücüsüz Arabalar Nasıl Gider?",
+                backText: "Yapay zeka sayesinde kendi kendine gidebilen arabalardır. Yolu görür, trafik kurallarına uyar ve seni güvenle taşır!",
+                bgColor: "bg-pink-600"
+            },
+            {
+                frontTitle: "Oyunlarda Yapay Zeka",
+                frontText: "Akıllı oyun arkadaşları!",
+                frontIcon: "fas fa-gamepad",
+                backTitle: "Oyunlarda Yapay Zeka Ne Yapar?",
+                backText: "Video oyunlarındaki karakterlerin seninle oynamasını veya sana karşı yarışmasını sağlar. Oyunları daha eğlenceli yapar!",
+                bgColor: "bg-orange-600"
+            },
+            {
+                frontTitle: "Sanatta Yapay Zeka",
+                frontText: "Resim yapan bilgisayar!",
+                frontIcon: "fas fa-paint-brush",
+                backTitle: "Yapay Zeka Sanat Yapabilir mi?",
+                backText: "Evet! Yapay zeka, çok güzel resimler çizebilir, şarkılar yapabilir veya komik hikayeler yazabilir. Tıpkı bir sanatçı gibi!",
+                bgColor: "bg-red-600"
+            },
+            {
+                frontTitle: "Yapay Zeka Etiği",
+                frontText: "İyi bilgisayar kuralları!",
+                frontIcon: "fas fa-balance-scale",
+                backTitle: "Yapay Zeka Etiği Nedir?",
+                backText: "Yapay zekanın her zaman adil, güvenli ve doğru kararlar vermesini sağlayan kurallardır. Tıpkı senin iyi bir arkadaş olman gibi!",
+                bgColor: "bg-yellow-600"
+            }
+        ];
+
+        const cardsDataEN = [
+            {
+                frontTitle: "Artificial Intelligence",
+                frontText: "Smart computers!",
+                frontIcon: "fas fa-robot",
+                backTitle: "What is Artificial Intelligence?",
+                backText: "It's when computers can think, learn, and play like humans. It's a magical technology!",
+                bgColor: "bg-blue-600"
+            },
+            {
+                frontTitle: "Machine Learning",
+                frontText: "Computer learns!",
+                frontIcon: "fas fa-brain",
+                backTitle: "What is Machine Learning?",
+                backText: "It's when computers learn new things from pictures or sounds. Just like you learn games!",
+                bgColor: "bg-purple-600"
+            },
+            {
+                frontTitle: "Robots",
+                frontText: "Helpful friends!",
+                frontIcon: "fas fa-hands-helping",
+                backTitle: "What do Robots do?",
+                backText: "Smart machines that help us with chores, in factories, or even in space. Sometimes they just dance!",
+                bgColor: "bg-green-600"
+            },
+            {
+                frontTitle: "Chatbots",
+                frontText: "Talking computer!",
+                frontIcon: "fas fa-comments",
+                backTitle: "What do Chatbots do?",
+                backText: "Smart programs that can talk to you on the phone or computer. They answer your questions or tell you funny stories!",
+                bgColor: "bg-indigo-600"
+            },
+            {
+                frontTitle: "Image Recognition",
+                frontText: "Computer sees!",
+                frontIcon: "fas fa-eye",
+                backTitle: "How does Image Recognition work?",
+                backText: "It's when a computer can recognize cats, dogs, or your face in pictures. Just like you recognize your friends!",
+                bgColor: "bg-teal-600"
+            },
+            {
+                frontTitle: "Natural Language Processing",
+                frontText: "Computer understands you!",
+                frontIcon: "fas fa-volume-up",
+                backTitle: "What is Natural Language Processing?",
+                backText: "It's when a computer understands the language you speak or write. This is how voice assistants can talk to you!",
+                bgColor: "bg-cyan-600"
+            },
+            {
+                frontTitle: "Data",
+                frontText: "Computer's food!",
+                frontIcon: "fas fa-database",
+                backTitle: "Why is Data important?",
+                backText: "It's all the information AI needs to learn. Just like you learn from books, AI learns from data!",
+                bgColor: "bg-emerald-600"
+            },
+            {
+                frontTitle: "Algorithm",
+                frontText: "Computer's recipe!",
+                frontIcon: "fas fa-list-ol",
+                backTitle: "What is an Algorithm?",
+                backText: "It's a step-by-step set of instructions to complete a task. Just like a cake recipe, AI follows these steps!",
+                bgColor: "bg-fuchsia-600"
+            },
+            {
+                frontTitle: "Training",
+                frontText: "Computer studies!",
+                frontIcon: "fas fa-chalkboard-teacher",
+                backTitle: "How is AI Trained?",
+                backText: "AI is taught new things by showing it many examples. Just like you study at school!",
+                bgColor: "bg-rose-600"
+            },
+            {
+                frontTitle: "Prediction",
+                frontText: "Knows what will happen!",
+                frontIcon: "fas fa-lightbulb",
+                backTitle: "How does AI make Predictions?",
+                backText: "It uses what it has learned to guess what might happen in the future or what something is. Like a weather forecast!",
+                bgColor: "bg-lime-600"
+            },
+            {
+                frontTitle: "Automation",
+                frontText: "Does it by itself!",
+                frontIcon: "fas fa-cogs",
+                backTitle: "What is Automation?",
+                backText: "It's when AI does tasks by itself without needing people. Think of robot arms in factories!",
+                bgColor: "bg-sky-600"
+            },
+            {
+                frontTitle: "Smart Homes",
+                frontText: "Helpful homes!",
+                frontIcon: "fas fa-home",
+                backTitle: "How do Smart Homes work?",
+                backText: "Homes powered by AI turn on lights, play music, or lock doors. They make everything easier for you!",
+                bgColor: "bg-violet-600"
+            },
+            {
+                frontTitle: "Self-Driving Cars",
+                frontText: "Cars that drive themselves!",
+                frontIcon: "fas fa-car",
+                backTitle: "How do Self-Driving Cars work?",
+                backText: "They are cars that can drive themselves thanks to AI. They see the road, follow traffic rules, and carry you safely!",
+                bgColor: "bg-pink-600"
+            },
+            {
+                frontTitle: "AI in Games",
+                frontText: "Smart game buddies!",
+                frontIcon: "fas fa-gamepad",
+                backTitle: "What does AI do in Games?",
+                backText: "It makes characters in video games play with you or compete against you. It makes games more fun!",
+                bgColor: "bg-orange-600"
+            },
+            {
+                frontTitle: "AI in Art",
+                frontText: "Computer that draws!",
+                frontIcon: "fas fa-paint-brush",
+                backTitle: "Can AI create Art?",
+                backText: "Yes! AI can draw beautiful pictures, make songs, or write funny stories. Just like an artist!",
+                bgColor: "bg-red-600"
+            },
+            {
+                frontTitle: "AI Ethics",
+                frontText: "Good computer rules!",
+                frontIcon: "fas fa-balance-scale",
+                backTitle: "What is AI Ethics?",
+                backText: "These are rules that make sure AI always makes fair, safe, and correct decisions. Just like you try to be a good friend!",
+                bgColor: "bg-yellow-600"
+            }
+        ];
+
+        const uiTexts = {
+            tr: {
+                appTitle: "Yapay Zeka Öğreniyorum!", // Updated title
+                appSubtitle: "Kartları çevir, bilmeceleri çöz, test ol ve eğlen!",
+                welcomeTitle: "Hoş Geldin Minik Kaşif! 👋",
+                welcomeMessage: "Maceraya başlamadan önce adını bize söyler misin?",
+                namePlaceholder: "Adın ne?",
+                startButton: "Başla!",
+                helloUser: "Merhaba",
+                progressText: "İlerleme:",
+                prevButton: "Önceki",
+                nextButton: "Sonraki",
+                learnedButton: "Öğrendim!",
+                certificateTitle: "Tebrikler! 🎉",
+                certificateSubtitle: "Yapay zeka temel kavramlarını öğrendin!",
+                certificateHeader: "Başarı Sertifikası",
+                certificateLine1: "Bu sertifika",
+                certificateLine2: "unvanını kazandığını gösterir",
+                aiExpert: "Yapay Zeka Uzmanı",
+                date: "Tarih:",
+                generateStory: "Yapay Zeka Hikayesi Oluştur",
+                tellConceptStory: "Hikayesini Anlat", 
+                generateRiddle: "Yapay Zeka Bilmecesi Oluştur",
+                generateQuiz: "Bana Soru Sor!",
+                generateSong: "Yapay Zeka Şarkısı Oluştur",
+                generateDrawing: "Yapay Zeka Çizim Fikri Oluştur",
+                generateJoke: "Yapay Zeka Şakası",
+                askAi: "Yapay Zekaya Sor",
+                restart: "Tekrar Başla",
+                aiStoryModalTitle: "Yapay Zeka Hikayesi",
+                conceptStoryModalTitle: "Kavram Hikayesi",
+                riddleModalTitle: "Yapay Zeka Bilmecesi",
+                quizModalTitle: "Yapay Zeka Testi!",
+                songModalTitle: "Yapay Zeka Şarkısı! 🎶",
+                drawingIdeaModalTitle: "Yapay Zeka Çizim Fikri! 🎨",
+                jokeModalTitle: "Yapay Zeka Şakası! 😂",
+                askAiModalTitle: "Yapay Zekaya Sor! 🤔",
+                askAiPlaceholder: "Yapay zekaya bir soru sor...",
+                askAiSubmit: "Sor!",
+                storyGenerationError: "Üzgünüm, hikaye oluşturulamadı. Lütfen tekrar deneyin.",
+                riddleGenerationError: "Üzgünüm, bilmece oluşturulamadı. Lütfen tekrar deneyin.",
+                quizGenerationError: "Üzgünüm, soru oluşturulamadı. Lütfen tekrar deneyin.",
+                songGenerationError: "Üzgünüm, şarkı oluşturulamadı. Lütfen tekrar deneyin.",
+                drawingGenerationError: "Üzgünüm, çizim fikri oluşturulamadı. Lütfen tekrar deneyin.",
+                jokeGenerationError: "Üzgünüm, şaka oluşturulamadı. Lütfen tekrar deneyin.",
+                answerGenerationError: "Üzgünüm, cevabı bulamadım. Lütfen başka bir soru deneyin.",
+                generalError: "Bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
+                pleaseEnterName: "Lütfen adınızı girin!",
+                pleaseEnterQuestion: "Lütfen bir soru yazın!",
+                correctAnswer: "Doğru bildin! Harikasın! 🎉",
+                wrongAnswer: "Yanlış cevap. Doğru cevap:",
+                nextQuestion: "Sonraki Soru",
+                footerText1: "Bu sayfada yer alan bilgiler, kaynak gösterilen içeriklerden derlenmiştir. Sertifikanın yasal bir geçerliliği yoktur, sadece eğitim amacıyla ve kar gütmeden hazırlanmıştır.",
+                footerText2: "Semanur Ayyıldız",
+                footerText3: "Görsel İletişim Tasarımı ve Dijital Dönüşüm Uzmanı",
+                footerText4: "© 2025 Çocuklar İçin Yapay Zeka Eğitimi. Tüm hakları saklıdır.",
+                badges: [
+                    "Yapay Zeka", "Makine Öğrenmesi", "Robotlar", "Sohbet Botları", "Görüntü Tanıma", "Doğal Dil İşleme", "Veri", "Algoritma", "Eğitim", "Tahmin", "Otomasyon", "Akıllı Evler", "Sürücüsüz Arabalar", "Oyunlarda Yapay Zeka", "Sanatta Yapay Zeka", "Yapay Zeka Etiği"
+                ]
+            },
+            en: {
+                appTitle: "Learning Artificial Intelligence!", 
+                appSubtitle: "Flip the cards, solve riddles, take quizzes, and have fun!",
+                welcomeTitle: "Welcome Little Explorer! 👋",
+                welcomeMessage: "Before we start the adventure, can you tell us your name?",
+                namePlaceholder: "What's your name?",
+                startButton: "Start!",
+                helloUser: "Hello",
+                progressText: "Progress:",
+                prevButton: "Previous",
+                nextButton: "Next",
+                learnedButton: "I Learned It!",
+                certificateTitle: "Congratulations! 🎉",
+                certificateSubtitle: "You've learned the basic concepts of Artificial Intelligence!",
+                certificateHeader: "Certificate of Achievement",
+                certificateLine1: "This certificate shows that",
+                certificateLine2: "has earned the title of",
+                aiExpert: "AI Expert",
+                date: "Date:",
+                generateStory: "Generate AI Story",
+                tellConceptStory: "Tell the Story", 
+                generateRiddle: "Generate AI Riddle",
+                generateQuiz: "Ask Me a Question!",
+                generateSong: "Generate AI Song",
+                generateDrawing: "Generate AI Drawing Idea",
+                generateJoke: "AI Joke",
+                askAi: "Ask AI",
+                restart: "Start Over", 
+                aiStoryModalTitle: "AI Story",
+                conceptStoryModalTitle: "Concept Story",
+                riddleModalTitle: "AI Riddle",
+                quizModalTitle: "AI Quiz!",
+                songModalTitle: "AI Song! 🎶",
+                drawingIdeaModalTitle: "AI Drawing Idea! 🎨",
+                jokeModalTitle: "AI Joke! 😂",
+                askAiModalTitle: "Ask AI! 🤔",
+                askAiPlaceholder: "Ask AI a question...",
+                askAiSubmit: "Ask!",
+                storyGenerationError: "Sorry, the story could not be generated. Please try again.",
+                riddleGenerationError: "Sorry, the riddle could not be generated. Please try again.",
+                quizGenerationError: "Sorry, the question could not be generated. Please try again.",
+                songGenerationError: "Sorry, the song could not be generated. Please try again.",
+                drawingGenerationError: "Sorry, the drawing idea could not be generated. Please try again.",
+                jokeGenerationError: "Sorry, the joke could not be generated. Please try again.",
+                answerGenerationError: "Sorry, I couldn't find the answer. Please try another question.",
+                generalError: "An error occurred. Please try again later.",
+                pleaseEnterName: "Please enter your name!",
+                pleaseEnterQuestion: "Please write a question!",
+                correctAnswer: "You got it right! Amazing! 🎉",
+                wrongAnswer: "Wrong answer. The correct answer is:",
+                nextQuestion: "Next Question",
+                footerText1: "The information on this page is compiled from cited sources. The certificate has no legal validity and is prepared for educational purposes only, non-profit.",
+                footerText2: "Semanur Ayyıldız",
+                footerText3: "Visual Communication Design and Digital Transformation Specialist",
+                footerText4: "© 2025 AI Education for Kids. All rights reserved.",
+                badges: [
+                    "Artificial Intelligence", "Machine Learning", "Robots", "Chatbots", "Image Recognition", "Natural Language Processing", "Data", "Algorithm", "Training", "Prediction", "Automation", "Smart Homes", "Self-Driving Cars", "AI in Games", "AI in Art", "AI Ethics"
+                ]
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('appLanguage') || 'tr'; // Default to Turkish
+        let currentCardsData = currentLanguage === 'tr' ? cardsDataTR : cardsDataEN;
+
+        let currentCardIndex = 0;
+        let flippedCards = new Set(); // Stores indices of cards that have been flipped to the back
+        let isCardFlipped = false;
+        const totalCards = currentCardsData.length;
+        let riddleData = { riddle: "", options: [], answer: "" }; // To store the current riddle and its answer
+        let quizData = { question: "", options: [], correct_answer: "" }; // To store the current quiz data
+
+        // Get DOM elements
+        const flashcard = document.getElementById('flashcard');
+        const cardFront = document.getElementById('card-front');
+        const cardBack = document.getElementById('card-back');
+        const frontIcon = document.getElementById('front-icon');
+        const frontTitle = document.getElementById('front-title');
+        const frontText = document.getElementById('front-text');
+        const backTitle = document.getElementById('back-title');
+        const backText = document.getElementById('back-text');
+        const frontCardNumber = document.getElementById('front-card-number');
+        const backCardNumber = document.getElementById('back-card-number');
+
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const learnedBtn = document.getElementById('learned-btn');
+        const progressElement = document.getElementById('progress');
+        const progressTextElement = document.getElementById('progress-text');
+
+        const headerSection = document.getElementById('header-section');
+        const mainContent = document.getElementById('main-app-content'); // New main content container
+        const certificateSection = document.getElementById('certificate-section');
+        const certificateDate = document.getElementById('certificate-date');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        // Gemini API related elements
+        const generateStoryBtn = document.getElementById('generate-story-btn');
+        const aiStoryModal = document.getElementById('aiStoryModal');
+        const closeStoryModal = document.getElementById('closeStoryModal');
+        const aiStoryText = document.getElementById('ai-story-text');
+        const storyLoader = document.getElementById('story-loader');
+        const playAiStoryBtn = document.getElementById('play-ai-story-btn');
+        const pauseAiStoryBtn = document.getElementById('pause-ai-story-btn');
+
+        // Elements for concept story
+        const tellConceptStoryBtn = document.getElementById('tell-concept-story-btn');
+        const conceptStoryModal = document.getElementById('conceptStoryModal');
+        const closeConceptStoryModal = document.getElementById('closeConceptStoryModal');
+        const conceptStoryText = document.getElementById('concept-story-text');
+        const conceptStoryLoader = document.getElementById('concept-story-loader');
+        const playConceptStoryBtn = document.getElementById('play-concept-story-btn');
+        const pauseConceptStoryBtn = document.getElementById('pause-concept-story-btn');
+
+        // Elements for riddle
+        const generateRiddleBtn = document.getElementById('generate-riddle-btn');
+        const riddleModal = document.getElementById('riddleModal');
+        const closeRiddleModal = document.getElementById('closeRiddleModal'); 
+        const riddleText = document.getElementById('riddle-text');
+        const riddleOptionsContainer = document.getElementById('riddle-options-container'); // Changed to options container
+        const riddleFeedback = document.getElementById('riddle-feedback');
+        const riddleLoader = document.getElementById('riddle-loader');
+
+        // Elements for quiz
+        const generateQuizBtn = document.getElementById('generate-quiz-btn');
+        const quizModal = document.getElementById('quizModal');
+        const closeQuizModal = document.getElementById('closeQuizModal');
+        const quizQuestion = document.getElementById('quiz-question');
+        const quizOptionsContainer = document.getElementById('quiz-options-container');
+        const quizFeedback = document.getElementById('quiz-feedback');
+        const quizLoader = document.getElementById('quiz-loader');
+        const nextQuizBtn = document.getElementById('next-quiz-btn');
+
+        // Elements for song
+        const generateSongBtn = document.getElementById('generate-song-btn');
+        const songModal = document.getElementById('songModal');
+        const closeSongModal = document.getElementById('closeSongModal'); 
+        const aiSongText = document.getElementById('ai-song-text');
+        const songLoader = document.getElementById('song-loader');
+
+        // Elements for drawing idea
+        const generateDrawingBtn = document.getElementById('generate-drawing-btn'); 
+        const drawingIdeaModal = document.getElementById('drawingIdeaModal'); 
+        const closeDrawingIdeaModal = document.getElementById('closeDrawingIdeaModal');
+        const aiDrawingIdeaText = document.getElementById('ai-drawing-idea-text');
+        const drawingLoader = document.getElementById('drawing-loader');
+
+        // New elements for AI Joke
+        const generateJokeBtn = document.getElementById('generate-joke-btn');
+        const aiJokeModal = document.getElementById('aiJokeModal');
+        const closeJokeModal = document.getElementById('closeJokeModal');
+        const aiJokeText = document.getElementById('ai-joke-text');
+        const jokeLoader = document.getElementById('joke-loader');
+
+        // New elements for Ask AI
+        const askAiBtn = document.getElementById('ask-ai-btn');
+        const askAiModal = document.getElementById('askAiModal');
+        const closeAskAiModal = document.getElementById('closeAskAiModal');
+        const aiQuestionInput = document.getElementById('ai-question-input');
+        const submitAiQuestionBtn = document.getElementById('submit-ai-question-btn');
+        const aiAnswerText = document.getElementById('ai-answer-text');
+        const askAiLoader = document.getElementById('ask-ai-loader');
+
+        // Login screen elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const childNameInput = document.getElementById('child-name-input');
+        const startLearningBtn = document.getElementById('start-learning-btn');
+        const userNameDisplay = document.getElementById('user-name-display');
+
+        // Custom Alert Modal elements
+        const customAlertModal = document.getElementById('customAlertModal');
+        const customAlertMessage = document.getElementById('customAlertMessage');
+        const closeCustomAlertBtn = document.getElementById('closeCustomAlert');
+
+        // Language toggle
+        const langToggle = document.getElementById('lang-toggle');
+        const langLabelTr = document.getElementById('lang-label-tr');
+        const langLabelEn = document.getElementById('lang-label-en');
+
+        // Speech synthesis setup
+        const synth = window.speechSynthesis;
+        let speechUtterance = null;
+        let turkishVoice = null;
+        let englishVoice = null;
+
+        // Function to find a suitable voice for the current language
+        function findVoices() {
+            const voices = synth.getVoices();
+            turkishVoice = voices.find(voice => voice.lang === 'tr-TR' && voice.name.includes('Google')) ||
+                           voices.find(voice => voice.lang === 'tr-TR');
+            englishVoice = voices.find(voice => voice.lang === 'en-US' && voice.name.includes('Google')) ||
+                           voices.find(voice => voice.lang === 'en-US');
+            if (!turkishVoice) console.warn("Türkçe ses bulunamadı. Varsayılan ses kullanılacak.");
+            if (!englishVoice) console.warn("English voice not found. Default voice will be used.");
+        }
+
+        // Listen for voices being loaded
+        synth.onvoiceschanged = findVoices;
+
+        // Call once on load in case voices are already loaded
+        findVoices();
+
+        // Firebase Initialization
+        async function initializeFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/user_profiles`, userId);
+                        const userProfileSnap = await getDoc(userProfileRef);
+                        if (userProfileSnap.exists()) {
+                            userName = userProfileSnap.data().name;
+                            showMainContent();
+                        } else {
+                            showLoginScreen();
+                        }
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase başlatılırken hata oluştu:", error);
+                showMainContent(); // Fallback
+            }
+        }
+
+        // Function to update UI texts based on current language
+        function updateUIForLanguage() {
+            const texts = uiTexts[currentLanguage];
+            document.documentElement.lang = currentLanguage; // Update HTML lang attribute
+
+            // Update header
+            document.querySelector('#header-section h1').textContent = texts.appTitle;
+            document.querySelector('#header-section p').innerHTML = `${texts.helloUser} <span id="user-name-display">${userName}</span>! ${texts.appSubtitle}`;
+            document.getElementById('progress-text').textContent = `${texts.progressText} ${flippedCards.size}/${totalCards}`;
+
+            // Update welcome screen
+            document.querySelector('#welcome-screen h2').textContent = texts.welcomeTitle;
+            document.querySelector('#welcome-screen p').textContent = texts.welcomeMessage;
+            document.getElementById('child-name-input').placeholder = texts.namePlaceholder;
+            document.getElementById('start-learning-btn').innerHTML = `${texts.startButton} <i class="fas fa-play"></i>`;
+
+            // Update control buttons
+            prevBtn.innerHTML = `<i class="fas fa-arrow-left"></i> ${currentLanguage === 'en' ? '<span class="hidden md:inline">Previous</span>' : ''}`;
+            learnedBtn.innerHTML = `<i class="fas fa-check"></i> ${texts.learnedButton}`;
+            nextBtn.innerHTML = `<i class="fas fa-arrow-right"></i> ${currentLanguage === 'en' ? '<span class="hidden md:inline">Next</span>' : ''}`;
+
+
+            // Update certificate section
+            document.querySelector('#certificate-section h2').textContent = texts.certificateTitle;
+            document.querySelector('#certificate-section > p').textContent = texts.certificateSubtitle;
+            document.querySelector('.certificate h3').textContent = texts.certificateHeader;
+            document.querySelector('.certificate p:nth-of-type(1)').textContent = texts.certificateLine1;
+            document.querySelector('.certificate p:nth-of-type(2)').textContent = texts.aiExpert;
+            document.querySelector('.certificate p:nth-of-type(3)').textContent = texts.certificateLine2;
+            document.getElementById('certificate-date').textContent = `${texts.date} ${new Date().toLocaleDateString(currentLanguage === 'tr' ? 'tr-TR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+
+            // Update badges
+            const badgeContainer = document.querySelector('.certificate .flex-wrap');
+            badgeContainer.innerHTML = '';
+            texts.badges.forEach(badgeText => {
+                const span = document.createElement('span');
+                span.classList.add('badge');
+                span.textContent = badgeText;
+                badgeContainer.appendChild(span);
+            });
+
+            // Update certificate buttons
+            document.getElementById('generate-story-btn').innerHTML = `${texts.generateStory} ✨`;
+            document.getElementById('tell-concept-story-btn').innerHTML = `${texts.tellConceptStory} ✨`;
+            document.getElementById('generate-riddle-btn').innerHTML = `${texts.generateRiddle} ✨`;
+            document.getElementById('generate-quiz-btn').innerHTML = `${texts.generateQuiz} ✨`;
+            document.getElementById('generate-song-btn').innerHTML = `${texts.generateSong} ✨`;
+            document.getElementById('generate-drawing-btn').innerHTML = `${texts.generateDrawing} ✨`;
+            document.getElementById('generate-joke-btn').innerHTML = `${texts.generateJoke} ✨`;
+            document.getElementById('ask-ai-btn').innerHTML = `${texts.askAi} ✨`;
+            document.getElementById('restart-btn').textContent = texts.restart;
+
+            // Update modal titles
+            document.querySelector('#aiStoryModal h3').textContent = texts.aiStoryModalTitle;
+            document.querySelector('#conceptStoryModal h3').textContent = texts.conceptStoryModalTitle;
+            document.querySelector('#riddleModal h3').textContent = texts.riddleModalTitle;
+            document.querySelector('#quizModal h3').textContent = texts.quizModalTitle;
+            document.querySelector('#songModal h3').textContent = texts.songModalTitle;
+            document.querySelector('#drawingIdeaModal h3').textContent = texts.drawingIdeaModalTitle;
+            document.querySelector('#aiJokeModal h3').textContent = texts.jokeModalTitle;
+            document.querySelector('#askAiModal h3').textContent = texts.askAiModalTitle;
+            document.getElementById('ai-question-input').placeholder = texts.askAiPlaceholder;
+            document.getElementById('submit-ai-question-btn').textContent = texts.askAiSubmit;
+            document.getElementById('next-quiz-btn').textContent = texts.nextQuestion;
+
+            // Update footer
+            document.getElementById('footer-text-1').textContent = texts.footerText1;
+            document.getElementById('footer-text-2').textContent = texts.footerText2;
+            document.getElementById('footer-text-3').textContent = texts.footerText3;
+            document.getElementById('footer-text-4').textContent = texts.footerText4;
+
+            // Update language labels
+            langLabelTr.style.fontWeight = currentLanguage === 'tr' ? 'bold' : 'normal';
+            langLabelEn.style.fontWeight = currentLanguage === 'en' ? 'bold' : 'normal';
+
+            // Update card data source
+            currentCardsData = currentLanguage === 'tr' ? cardsDataTR : cardsDataEN;
+            updateCardContent(); // Re-render current card with new language
+        }
+
+        // Function to show login screen
+        function showLoginScreen() {
+            welcomeScreen.classList.remove('hidden');
+            mainContent.classList.add('hidden');
+            certificateSection.classList.add('hidden');
+        }
+
+        // Function to show main content after login/load
+        function showMainContent() {
+            welcomeScreen.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            userNameDisplay.textContent = userName;
+            updateCardContent();
+            updateProgressBar();
+        }
+
+        // Custom Alert Function
+        function showCustomAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlertModal.style.display = 'flex';
+        }
+
+        // Function to update card content
+        function updateCardContent() {
+            const card = currentCardsData[currentCardIndex];
+            
+            // Remove previous background classes
+            cardFront.className = 'card-front'; 
+            cardBack.className = 'card-back';
+            
+            // Add new background class
+            cardFront.classList.add(card.bgColor);
+            cardBack.classList.add(card.bgColor);
+
+            // Update icon using innerHTML for Font Awesome
+            frontIcon.innerHTML = `<i class="${card.frontIcon}"></i>`;
+            frontTitle.textContent = card.frontTitle;
+            frontText.textContent = card.frontText;
+            backTitle.textContent = card.backTitle;
+            backText.textContent = card.backText;
+            frontCardNumber.textContent = currentCardIndex + 1;
+            backCardNumber.textContent = currentCardIndex + 1;
+
+            // Reset flipped state
+            flashcard.classList.remove('flipped');
+            isCardFlipped = false;
+
+            // Enable/disable navigation buttons
+            prevBtn.disabled = currentCardIndex === 0;
+            nextBtn.disabled = currentCardIndex === totalCards - 1;
+
+            // Show/hide "Öğrendim!" button
+            if (flippedCards.has(currentCardIndex)) {
+                learnedBtn.classList.add('hidden');
+            } else {
+                learnedBtn.classList.remove('hidden');
+            }
+        }
+
+        // Function to update progress bar
+        function updateProgressBar() {
+            const progress = (flippedCards.size / totalCards) * 100;
+            progressElement.style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${uiTexts[currentLanguage].progressText} ${flippedCards.size}/${totalCards}`;
+
+            if (flippedCards.size === totalCards) {
+                showCertificate();
+            }
+        }
+
+        // Function to speak text
+        function speakText(text, lang) {
+            if (synth.speaking) {
+                synth.cancel(); // Stop any ongoing speech
+            }
+            speechUtterance = new SpeechSynthesisUtterance(text);
+            speechUtterance.lang = lang; 
+            
+            // Ayarlar: Sesi daha tiz ve biraz daha hızlı yaparak çocuk sesi benzetmesi
+            speechUtterance.pitch = 1.2; // Ses perdesi (0.1'den 2'ye, 1 varsayılan)
+            speechUtterance.rate = 1.1;  // Konuşma hızı (0.1'den 10'a, 1 varsayılan)
+
+            if (lang === 'tr-TR' && turkishVoice) {
+                speechUtterance.voice = turkishVoice;
+            } else if (lang === 'en-US' && englishVoice) {
+                speechUtterance.voice = englishVoice;
+            }
+            synth.speak(speechUtterance);
+        }
+
+        // Function to show certificate
+        function showCertificate() {
+            headerSection.classList.add('hidden');
+            mainContent.classList.add('hidden'); // Hide main content
+            certificateSection.classList.remove('hidden');
+
+            const today = new Date();
+            certificateDate.textContent = `${uiTexts[currentLanguage].date} ${today.toLocaleDateString(currentLanguage === 'tr' ? 'tr-TR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+
+            // Trigger confetti animation
+            createConfetti();
+        }
+
+        // Function to create confetti
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `${Math.random() * -20}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                document.body.appendChild(confetti);
+                // Remove confetti after animation
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+        // Function to generate AI story using Gemini API (for certificate screen)
+        async function generateAIStory() {
+            aiStoryModal.style.display = 'flex'; // Show modal
+            aiStoryText.textContent = ''; // Clear previous story
+            storyLoader.classList.remove('hidden'); // Show loader
+            playAiStoryBtn.classList.remove('hidden');
+            pauseAiStoryBtn.classList.add('hidden');
+            synth.cancel(); // Stop any ongoing speech
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Write a very short (30-40 words), fun, and educational story about artificial intelligence for a 5-year-old child. The main character should be a robot. Format as title and story text. Sentences should be very simple and short. The story must be in ${langPrompt}. Make sure the story clearly explains how AI works in a simple way.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiStoryText.textContent = text;
+                } else {
+                    aiStoryText.textContent = uiTexts[currentLanguage].storyGenerationError;
+                }
+            } catch (error) {
+                console.error("Hikaye oluşturulurken hata oluştu:", error);
+                aiStoryText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                storyLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to tell concept story using Gemini API (for card back)
+        async function tellConceptStory() {
+            conceptStoryModal.style.display = 'flex'; // Show modal
+            conceptStoryText.textContent = ''; // Clear previous text
+            conceptStoryLoader.classList.remove('hidden'); // Show loader
+            playConceptStoryBtn.classList.remove('hidden');
+            pauseConceptStoryBtn.classList.add('hidden');
+            synth.cancel(); // Stop any ongoing speech
+
+            const conceptTitle = currentCardsData[currentCardIndex].backTitle;
+            const conceptDescription = currentCardsData[currentCardIndex].backText;
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Write a very short (30-40 words), fun, and educational story for a 5-year-old child about the concept "${conceptTitle}". Here's the explanation of the concept: "${conceptDescription}". Sentences should be very simple and short. The story must be in ${langPrompt}. Make sure the story clearly explains the mechanism of the concept in a simple way.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    conceptStoryText.textContent = text;
+                } else {
+                    conceptStoryText.textContent = uiTexts[currentLanguage].storyGenerationError;
+                }
+            } catch (error) {
+                console.error("Kavram hikayesi oluşturulurken hata oluştu:", error);
+                conceptStoryText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                conceptStoryLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to generate AI Riddle using Gemini API
+        async function generateRiddle() {
+            riddleModal.style.display = 'flex'; // Show modal
+            riddleText.textContent = ''; // Clear previous riddle
+            riddleOptionsContainer.innerHTML = ''; // Clear previous options
+            riddleFeedback.textContent = ''; // Clear previous feedback
+            riddleLoader.classList.remove('hidden'); // Show loader
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Create a very short and fun riddle for a 5-year-old child about one of the artificial intelligence concepts, with 3 options and a single correct answer. Format the riddle, options, and correct answer in JSON. Example: {\"riddle\": \"I have no brain but I can think, no eyes but I can see. What am I?\", \"options\": [\"Robot\", \"Artificial Intelligence\", \"Cat\"], \"answer\": \"Artificial Intelligence\"}. Sentences should be very simple and short. The riddle must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { 
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "riddle": { "type": "STRING" },
+                            "options": { "type": "ARRAY", "items": { "type": "STRING" } },
+                            "answer": { "type": "STRING" }
+                        },
+                        "propertyOrdering": ["riddle", "options", "answer"]
+                    }
+                }
+            };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const json = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(json);
+                    riddleData.riddle = parsedJson.riddle;
+                    riddleData.options = parsedJson.options; // Store options
+                    riddleData.answer = parsedJson.answer;
+                    displayRiddle();
+                } else {
+                    riddleText.textContent = uiTexts[currentLanguage].riddleGenerationError;
+                }
+            } catch (error) {
+                console.error("Bilmece oluşturulurken hata oluştu:", error);
+                riddleText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                riddleLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to display the riddle question and options
+        function displayRiddle() {
+            riddleText.textContent = riddleData.riddle;
+            riddleOptionsContainer.innerHTML = ''; // Clear previous options
+
+            riddleData.options.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.textContent = option;
+                optionBtn.classList.add('quiz-option-btn', 'btn', 'w-full', 'py-2', 'px-4', 'rounded-md', 'bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+                optionBtn.dataset.answer = option;
+                optionBtn.addEventListener('click', checkRiddleAnswer);
+                riddleOptionsContainer.appendChild(optionBtn);
+            });
+        }
+
+        // Function to check the riddle answer
+        function checkRiddleAnswer(event) {
+            const selectedAnswer = event.target.dataset.answer;
+            const allOptionBtns = riddleOptionsContainer.querySelectorAll('.quiz-option-btn');
+
+            allOptionBtns.forEach(btn => {
+                btn.disabled = true; // Disable all buttons after selection
+                if (btn.dataset.answer.toLowerCase() === riddleData.answer.toLowerCase()) {
+                    btn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                    btn.classList.add('bg-green-500', 'text-white'); // Highlight correct answer
+                } else if (btn.dataset.answer === selectedAnswer) {
+                    btn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                    btn.classList.add('bg-red-500', 'text-white'); // Highlight incorrect selected answer
+                }
+            });
+
+            if (selectedAnswer.toLowerCase() === riddleData.answer.toLowerCase()) {
+                riddleFeedback.textContent = uiTexts[currentLanguage].correctAnswer;
+                riddleFeedback.style.color = "green";
+            } else {
+                riddleFeedback.textContent = `${uiTexts[currentLanguage].wrongAnswer} "${riddleData.answer}"`;
+                riddleFeedback.style.color = "red";
+            }
+        }
+
+        // Function to generate AI Quiz using Gemini API
+        async function generateQuiz() {
+            quizModal.style.display = 'flex'; // Show modal
+            quizQuestion.textContent = ''; // Clear previous question
+            quizOptionsContainer.innerHTML = ''; // Clear previous options
+            quizFeedback.textContent = ''; // Clear previous feedback
+            nextQuizBtn.classList.add('hidden'); // Hide next quiz button
+            quizLoader.classList.remove('hidden'); // Show loader
+
+            const conceptTitle = currentCardsData[currentCardIndex].backTitle;
+            const conceptDescription = currentCardsData[currentCardIndex].backText;
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Create a 3-option, single-correct-answer multiple-choice question about the concept "${conceptTitle}" for a 5-year-old child. Format the question, options, and correct answer in JSON. Example: {\"question\": \"What does AI do?\", \"options\": [\"Draws pictures\", \"Sings songs\", \"Thinks like humans\"], \"correct_answer\": \"Thinks like humans\"}. Sentences should be very simple and short. The question must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { 
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "question": { "type": "STRING" },
+                            "options": {
+                                "type": "ARRAY",
+                                "items": { "type": "STRING" }
+                            },
+                            "correct_answer": { "type": "STRING" }
+                        },
+                        "propertyOrdering": ["question", "options", "correct_answer"]
+                    }
+                }
+            };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const json = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(json);
+                    quizData.question = parsedJson.question;
+                    quizData.options = parsedJson.options;
+                    quizData.correct_answer = parsedJson.correct_answer;
+                    displayQuiz();
+                } else {
+                    quizQuestion.textContent = uiTexts[currentLanguage].quizGenerationError;
+                }
+            } catch (error) {
+                console.error("Soru oluşturulurken hata oluştu:", error);
+                quizQuestion.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                quizLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to display the quiz question and options
+        function displayQuiz() {
+            quizQuestion.textContent = quizData.question;
+            quizOptionsContainer.innerHTML = ''; // Clear previous options
+
+            quizData.options.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.textContent = option;
+                optionBtn.classList.add('quiz-option-btn', 'btn', 'w-full', 'py-2', 'px-4', 'rounded-md', 'bg-gray-200', 'text-gray-800', 'hover:bg-gray-300');
+                optionBtn.dataset.answer = option;
+                optionBtn.addEventListener('click', checkQuizAnswer);
+                quizOptionsContainer.appendChild(optionBtn);
+            });
+        }
+
+        // Function to check the quiz answer
+        function checkQuizAnswer(event) {
+            const selectedAnswer = event.target.dataset.answer;
+            const allOptionBtns = quizOptionsContainer.querySelectorAll('.quiz-option-btn');
+
+            allOptionBtns.forEach(btn => {
+                btn.disabled = true; // Disable all buttons after selection
+                if (btn.dataset.answer.toLowerCase() === quizData.correct_answer.toLowerCase()) {
+                    btn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                    btn.classList.add('bg-green-500', 'text-white'); // Highlight correct answer
+                } else if (btn.dataset.answer === selectedAnswer) {
+                    btn.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+                    btn.classList.add('bg-red-500', 'text-white'); // Highlight incorrect selected answer
+                }
+            });
+
+            if (selectedAnswer.toLowerCase() === quizData.correct_answer.toLowerCase()) {
+                quizFeedback.textContent = uiTexts[currentLanguage].correctAnswer;
+                quizFeedback.style.color = "green";
+            } else {
+                quizFeedback.textContent = `${uiTexts[currentLanguage].wrongAnswer} "${quizData.correct_answer}"`;
+                quizFeedback.style.color = "red";
+            }
+            nextQuizBtn.classList.remove('hidden'); // Show next quiz button
+        }
+
+        // Function to generate AI Song using Gemini API
+        async function generateAISong() {
+            songModal.style.display = 'flex'; // Show modal
+            aiSongText.textContent = ''; // Clear previous song
+            songLoader.classList.remove('hidden'); // Show loader
+
+            // Select a random concept from cardsData for the song
+            const randomCard = currentCardsData[Math.floor(Math.random() * currentCardsData.length)];
+            const conceptName = randomCard.frontTitle;
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Write a very short (2-4 lines), fun, and simple song lyric about the concept "${conceptName}" for a 5-year-old child. It should rhyme like a nursery rhyme. Format as title and lyrics. Sentences should be very simple and short. The song must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiSongText.textContent = text;
+                } else {
+                    aiSongText.textContent = uiTexts[currentLanguage].songGenerationError;
+                }
+            } catch (error) {
+                console.error("Şarkı oluşturulurken hata oluştu:", error);
+                aiSongText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                songLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to generate AI Drawing Idea using Gemini API
+        async function generateAIDrawingIdea() {
+            drawingIdeaModal.style.display = 'flex'; // Show modal
+            aiDrawingIdeaText.textContent = ''; // Clear previous idea
+            drawingLoader.classList.remove('hidden'); // Show loader
+
+            // Select a random concept from cardsData for the drawing idea
+            const randomCard = currentCardsData[Math.floor(Math.random() * currentCardsData.length)];
+            const conceptName = randomCard.frontTitle;
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Give a simple, fun, and creative drawing idea about the concept "${conceptName}" that a 5-year-old child can easily draw. The idea should be 1-2 sentences. Example: "Draw a robot holding a book and smiling." The idea must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiDrawingIdeaText.textContent = text;
+                } else {
+                    aiDrawingIdeaText.textContent = uiTexts[currentLanguage].drawingGenerationError;
+                }
+            } catch (error) {
+                console.error("Çizim fikri oluşturulurken hata oluştu:", error);
+                aiDrawingIdeaText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                drawingLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to generate AI Joke using Gemini API
+        async function generateAIJoke() {
+            aiJokeModal.style.display = 'flex'; // Show modal
+            aiJokeText.textContent = ''; // Clear previous joke
+            jokeLoader.classList.remove('hidden'); // Show loader
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Write a very short and funny joke about AI or robots for a 5-year-old child. Just tell the joke, don't add anything else. The joke must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiJokeText.textContent = text;
+                } else {
+                    aiJokeText.textContent = uiTexts[currentLanguage].jokeGenerationError;
+                }
+            } catch (error) {
+                console.error("Şaka oluşturulurken hata oluştu:", error);
+                aiJokeText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                jokeLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+        // Function to ask AI a question using Gemini API
+        async function askAIQuestion() {
+            const question = aiQuestionInput.value.trim();
+            if (!question) {
+                showCustomAlert(uiTexts[currentLanguage].pleaseEnterQuestion);
+                return;
+            }
+
+            aiAnswerText.textContent = ''; // Clear previous answer
+            askAiLoader.classList.remove('hidden'); // Show loader
+            aiAnswerText.style.color = "#263238"; // Reset text color
+
+            const langPrompt = currentLanguage === 'tr' ? 'Türkçe' : 'English';
+            const prompt = `Answer the question "${question}" for a 5-year-old child in a very short (20-30 words) and simple way. The answer should be directly related to the question and easy to understand. The answer must be in ${langPrompt}.`;
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    aiAnswerText.textContent = text;
+                } else {
+                    aiAnswerText.textContent = uiTexts[currentLanguage].answerGenerationError;
+                }
+            } catch (error) {
+                console.error("Soru sorulurken hata oluştu:", error);
+                aiAnswerText.textContent = uiTexts[currentLanguage].generalError;
+            } finally {
+                askAiLoader.classList.add('hidden'); // Hide loader
+            }
+        }
+
+
+        // Event Listeners
+
+        // Language toggle
+        langToggle.addEventListener('change', () => {
+            currentLanguage = langToggle.checked ? 'en' : 'tr';
+            localStorage.setItem('appLanguage', currentLanguage);
+            updateUIForLanguage();
+        });
+
+        // Login button
+        startLearningBtn.addEventListener('click', async () => {
+            const inputName = childNameInput.value.trim();
+            if (inputName) {
+                userName = inputName;
+                if (userId && db) {
+                    const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/user_profiles`, userId);
+                    try {
+                        await setDoc(userProfileRef, { name: userName });
+                        showMainContent();
+                    } catch (error) {
+                        console.error("Kullanıcı adı kaydedilirken hata oluştu:", error);
+                        showMainContent();
+                    }
+                } else {
+                    showMainContent();
+                }
+            } else {
+                showCustomAlert(uiTexts[currentLanguage].pleaseEnterName);
+            }
+        });
+
+        // Custom Alert Close Button
+        closeCustomAlertBtn.addEventListener('click', () => {
+            customAlertModal.style.display = 'none';
+        });
+
+        // Card flip functionality
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('flipped');
+            isCardFlipped = !isCardFlipped; 
+            if (isCardFlipped) {
+                if (!flippedCards.has(currentCardIndex)) {
+                    flippedCards.add(currentCardIndex);
+                    updateProgressBar();
+                    learnedBtn.classList.add('hidden');
+                }
+            }
+        });
+
+        // Previous button
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card flip
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCardContent();
+            }
+        });
+
+        // Next button
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card flip
+            if (currentCardIndex < totalCards - 1) {
+                currentCardIndex++;
+                updateCardContent();
+            }
+        });
+
+        // "Öğrendim!" button
+        learnedBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card flip
+            if (!flippedCards.has(currentCardIndex)) {
+                flippedCards.add(currentCardIndex);
+                updateProgressBar();
+                learnedBtn.classList.add('hidden');
+            }
+        });
+
+        // Restart button
+        restartBtn.addEventListener('click', () => {
+            currentCardIndex = 0;
+            flippedCards.clear();
+            isCardFlipped = false;
+            updateCardContent();
+            updateProgressBar();
+            headerSection.classList.remove('hidden');
+            mainContent.classList.add('hidden');
+            certificateSection.classList.add('hidden');
+            learnedBtn.classList.remove('hidden');
+            aiStoryText.textContent = '';
+            conceptStoryText.textContent = '';
+            riddleOptionsContainer.innerHTML = '';
+            riddleFeedback.textContent = '';
+            quizQuestion.textContent = '';
+            quizOptionsContainer.innerHTML = '';
+            quizFeedback.textContent = '';
+            nextQuizBtn.classList.add('hidden');
+            aiSongText.textContent = '';
+            aiDrawingIdeaText.textContent = '';
+            aiJokeText.textContent = '';
+            aiQuestionInput.value = '';
+            aiAnswerText.textContent = '';
+            synth.cancel(); // Stop any speech
+            showLoginScreen();
+        });
+
+        // Generate Story button event listener (for certificate screen)
+        generateStoryBtn.addEventListener('click', generateAIStory);
+
+        // Play/Pause AI Story
+        playAiStoryBtn.addEventListener('click', () => {
+            speakText(aiStoryText.textContent, currentLanguage === 'tr' ? 'tr-TR' : 'en-US');
+            playAiStoryBtn.classList.add('hidden');
+            pauseAiStoryBtn.classList.remove('hidden');
+        });
+        pauseAiStoryBtn.addEventListener('click', () => {
+            synth.cancel();
+            playAiStoryBtn.classList.remove('hidden');
+            pauseAiStoryBtn.classList.add('hidden');
+        });
+
+        // Close AI Story Modal event listener
+        closeStoryModal.addEventListener('click', () => {
+            aiStoryModal.style.display = 'none';
+            synth.cancel();
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == aiStoryModal) {
+                aiStoryModal.style.display = 'none';
+                synth.cancel();
+            }
+        });
+
+        // Tell Concept Story button event listener (for card back)
+        tellConceptStoryBtn.addEventListener('click', tellConceptStory);
+
+        // Play/Pause Concept Story
+        playConceptStoryBtn.addEventListener('click', () => {
+            speakText(conceptStoryText.textContent, currentLanguage === 'tr' ? 'tr-TR' : 'en-US');
+            playConceptStoryBtn.classList.add('hidden');
+            pauseConceptStoryBtn.classList.remove('hidden');
+        });
+        pauseConceptStoryBtn.addEventListener('click', () => {
+            synth.cancel();
+            playConceptStoryBtn.classList.remove('hidden');
+            pauseConceptStoryBtn.classList.add('hidden');
+        });
+
+        // Close Concept Story Modal event listener
+        closeConceptStoryModal.addEventListener('click', () => {
+            conceptStoryModal.style.display = 'none';
+            synth.cancel();
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == conceptStoryModal) {
+                conceptStoryModal.style.display = 'none';
+            }
+        });
+
+        // Generate Riddle button event listener
+        generateRiddleBtn.addEventListener('click', generateRiddle);
+
+        // Close Riddle Modal event listener
+        closeRiddleModal.addEventListener('click', () => {
+            riddleModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == riddleModal) {
+                riddleModal.style.display = 'none';
+            }
+        });
+
+        // Generate Quiz button event listener
+        generateQuizBtn.addEventListener('click', generateQuiz);
+
+        // Next Quiz button event listener (to generate a new quiz)
+        nextQuizBtn.addEventListener('click', generateQuiz);
+
+        // Close Quiz Modal event listener
+        closeQuizModal.addEventListener('click', () => {
+            quizModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == quizModal) {
+                quizModal.style.display = 'none';
+            }
+        });
+
+        // Generate Song button event listener
+        generateSongBtn.addEventListener('click', generateAISong);
+
+        // Close Song Modal event listener
+        closeSongModal.addEventListener('click', () => {
+            songModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == songModal) {
+                songModal.style.display = 'none';
+            }
+        });
+
+        // Generate Drawing Idea button event listener
+        generateDrawingBtn.addEventListener('click', generateAIDrawingIdea);
+
+        // Close Drawing Idea Modal event listener
+        closeDrawingIdeaModal.addEventListener('click', () => {
+            drawingIdeaModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == drawingIdeaModal) {
+                drawingIdeaModal.style.display = 'none';
+            }
+        });
+
+        // New AI Joke button event listener
+        generateJokeBtn.addEventListener('click', generateAIJoke);
+
+        // Close AI Joke Modal event listener
+        closeJokeModal.addEventListener('click', () => {
+            aiJokeModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == aiJokeModal) {
+                aiJokeModal.style.display = 'none';
+            }
+        });
+
+        // New Ask AI button event listener
+        askAiBtn.addEventListener('click', () => {
+            askAiModal.style.display = 'flex';
+            aiQuestionInput.value = ''; // Clear input when opening
+            aiAnswerText.textContent = ''; // Clear answer when opening
+            aiAnswerText.style.color = "#263238"; // Reset text color
+        });
+
+        // Submit AI Question button event listener
+        submitAiQuestionBtn.addEventListener('click', askAIQuestion);
+
+        // Close Ask AI Modal event listener
+        closeAskAiModal.addEventListener('click', () => {
+            askAiModal.style.display = 'none';
+        });
+        window.addEventListener('click', (event) => {
+            if (event.target == askAiModal) {
+                askAiModal.style.display = 'none';
+            }
+        });
+
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial language toggle state
+            langToggle.checked = (currentLanguage === 'en');
+            updateUIForLanguage(); // Apply initial language
+            initializeFirebase(); // Initialize Firebase on DOM load
+        });
+    </script>
+</body>
+</html>
