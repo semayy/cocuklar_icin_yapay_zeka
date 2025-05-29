@@ -451,17 +451,17 @@
                         <label for="user-name" class="block text-cyan-300 mb-2 tech-font" data-lang-key="enter_name">
                             İSMİNİ GİR:
                         </label>
-                        <div class="flex">
+                        <div class="flex flex-col sm:flex-row">
                             <input 
                                 type="text" 
                                 id="user-name" 
-                                class="bg-slate-800 text-cyan-300 border border-cyan-500 rounded-l-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 tech-font"
+                                class="bg-slate-800 text-cyan-300 border border-cyan-500 rounded-lg sm:rounded-l-lg sm:rounded-r-none p-3 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 tech-font mb-2 sm:mb-0"
                                 placeholder="Adın ve Soyadın"
                                 data-lang-placeholder-key="name_placeholder"
                             >
                             <button 
                                 id="start-adventure" 
-                                class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-r-lg px-4 hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center"
+                                class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg sm:rounded-r-lg sm:rounded-l-none px-4 py-3 sm:py-0 hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center justify-center"
                                 data-lang-key="start_button"
                             >
                                 BAŞLA
@@ -502,7 +502,7 @@
                     <div class="bg-slate-900 p-4 rounded-xl border border-pink-800">
                         <div class="flex items-center mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29-3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
                             </svg>
                             <h3 class="text-pink-400 font-bold tech-font" data-lang-key="certificate_title">SERTİFİKA</h3>
                         </div>
@@ -659,17 +659,17 @@
                     <label for="robi-question-input" class="block text-cyan-300 mb-2 tech-font" data-lang-key="ask_robi_prompt">
                         Yapay zeka hakkında bir soru sor:
                     </label>
-                    <div class="flex">
+                    <div class="flex flex-col sm:flex-row">
                         <input 
                             type="text" 
                             id="robi-question-input" 
-                            class="bg-slate-800 text-cyan-300 border border-cyan-500 rounded-l-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 tech-font"
+                            class="bg-slate-800 text-cyan-300 border border-cyan-500 rounded-lg sm:rounded-l-lg sm:rounded-r-none p-3 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 tech-font mb-2 sm:mb-0"
                             placeholder="Örn: Robotlar rüya görür mü?"
                             data-lang-placeholder-key="ask_robi_placeholder"
                         >
                         <button 
                             id="ask-robi-btn" 
-                            class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-r-lg px-4 hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center"
+                            class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg sm:rounded-r-lg sm:rounded-l-none px-4 py-3 sm:py-0 hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center justify-center"
                             data-lang-key="ask_robi_button"
                         >
                             SOR ✨
@@ -1565,7 +1565,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `A child is asking you a question about AI. Answer in a child-friendly, short, and concise way. The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}. Question: "${question}"` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1610,7 +1610,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly story (around 100-150 words) about AI, robots, or technology, incorporating the following keywords: "${keywords}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1655,7 +1655,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `Given the scenario: "${scenario}", describe in 2-3 sentences what AI might do or how it would be used in a child-friendly way. The explanation should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1694,7 +1694,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a short, interesting, and child-friendly fun fact about Artificial Intelligence or robots. The fact should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1738,7 +1738,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a creative and child-friendly idea for an AI invention related to "${topic}". Describe it in 2-3 sentences. The idea should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1791,7 +1791,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `${riddleData.prompt} The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -1826,6 +1826,7 @@
                         btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
                         btnNextRiddle.removeEventListener('click', nextRiddle);
                         btnNextRiddle.addEventListener('click', showMatchingGameScreen);
+                        createConfetti(); // Trigger confetti when all riddles are solved
                     } else {
                         btnNextRiddle.textContent = translations[currentLanguage]['next_button'];
                         btnNextRiddle.removeEventListener('click', showMatchingGameScreen);
@@ -1850,6 +1851,7 @@
                         btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
                         btnNextRiddle.removeEventListener('click', nextRiddle);
                         btnNextRiddle.addEventListener('click', showMatchingGameScreen);
+                        createConfetti(); // Trigger confetti when all riddles are solved
                     } else {
                         btnNextRiddle.disabled = false; 
                     }
@@ -2008,7 +2010,7 @@
                     let chatHistory = [];
                     chatHistory.push({ role: "user", parts: [{ text: `A child named ${userName} completed the AI adventure. Write a 2-3 sentence, motivating, AI-themed congratulatory message for them. The message should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
