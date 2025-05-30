@@ -2135,7 +2135,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly alternative story (around 80-120 words) about "${conceptTitle}". Make it different from the original story: "${originalStory}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2183,7 +2183,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `A child is asking you a question about AI. Answer in a child-friendly, short, and concise way. The response should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}. Question: "${question}"` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2229,7 +2229,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly story (around 100-150 words) about AI, robots, or technology, incorporating the following keywords: "${keywords}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2249,7 +2249,7 @@
                     }
                 } catch (error) {
                     console.error("Gemini API hatası:", error);
-                    storyText.textContent = translations[currentCurrentLanguage]['story_api_error'];
+                    storyText.textContent = translations[currentLanguage]['story_api_error'];
                 } finally {
                     storyLoadingIndicator.classList.add('hidden');
                     generateStoryBtn.disabled = false;
@@ -2275,7 +2275,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Given the scenario: "${scenario}", describe in 2-3 sentences what AI might do or how it would be used in a child-friendly way. The explanation should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2315,7 +2315,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a short, interesting, and child-friendly fun fact about Artificial Intelligence or robots. The fact should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2360,7 +2360,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Generate a creative and child-friendly idea for an AI invention related to "${topic}". Describe it in 2-3 sentences. The idea should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2406,7 +2406,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `Imagine you are an AI that creates fun games for kids. Based on the theme "${theme}", suggest a simple game idea (2-3 sentences) suitable for a 6-year-old. The game should involve AI or robots in some way. Respond in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
@@ -2684,7 +2684,7 @@
                     chatHistory.push({ role: "user", parts: [{ text: `A child named ${userName} completed the AI adventure. Write a 2-3 sentence, motivating, AI-themed congratulatory message for them. The message should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
                     const payload = { contents: chatHistory };
                     // API Key should be set to the provided key
-                    const apiKey = ""; 
+                    const apiKey = "AIzaSyCEEywiObjmjA1ecwseMortdDKnt5Bwjrc"; 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
                     
                     const response = await fetch(apiUrl, {
