@@ -319,6 +319,7 @@
             padding: 0.5rem; /* Added padding */
         }
 
+        /* This is the key fix: when .matching-card has 'flipped' class, rotate it */
         .matching-card.flipped {
             transform: rotateY(180deg);
         }
@@ -412,7 +413,7 @@
                 height: 100%;
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content;
                 align-items: center;
             }
             #certificate-screen .certificate h1, #certificate-screen .certificate p, #certificate-screen .certificate span {
@@ -463,16 +464,21 @@
                 <div id="name-input-section" class="w-full max-w-md mx-auto mb-8 relative hidden">
                     <div class="floating mb-8">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40 mx-auto">
-                            <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
-                            <circle cx="85" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
-                            <circle cx="115" cy="60" r="8" fill="#38bdf8" class="robot-eye" />
-                            <path d="M85 85 Q100 100 115 85" stroke="#38bdf8" stroke-width="3" fill="none" />
-                            <rect x="60" y="110" width="80" height="60" rx="10" fill="#38bdf8" opacity="0.2" />
-                            <rect x="70" y="125" width="60" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
-                            <rect x="70" y="145" width="40" height="10" rx="5" fill="#38bdf8" opacity="0.5" />
-                            <circle cx="70" cy="40" r="10" fill="#a855f7" opacity="0.3" />
-                            <circle cx="130" cy="40" r="10" fill="#a855f7" opacity="0.3" />
-                            <path d="M70 40 Q100 10 130 40" stroke="#a855f7" stroke-width="5" fill="none" opacity="0.3" />
+                            <rect x="60" y="70" width="80" height="80" rx="15" fill="#38bdf8" opacity="0.7" class="floating" />
+                            <rect x="70" y="40" width="60" height="40" rx="10" fill="#a855f7" opacity="0.8" class="floating" />
+                            <circle cx="85" cy="55" r="5" fill="#e2e8f0" class="robot-eye" />
+                            <circle cx="115" cy="55" r="5" fill="#e2e8f0" class="robot-eye" />
+                            <path d="M85 65 Q100 75 115 65" stroke="#e2e8f0" stroke-width="2" fill="none" class="floating" />
+                            <line x1="80" y1="40" x2="70" y2="20" stroke="#a855f7" stroke-width="3" stroke-linecap="round" />
+                            <circle cx="70" cy="20" r="5" fill="#f472b6" />
+                            <line x1="120" y1="40" x2="130" y2="20" stroke="#a855f7" stroke-width="3" stroke-linecap="round" />
+                            <circle cx="130" cy="20" r="5" fill="#f472b6" />
+                            <rect x="45" y="80" width="15" height="40" rx="5" fill="#38bdf8" opacity="0.6" transform="rotate(-10 45 80)" class="floating" />
+                            <rect x="140" y="80" width="15" height="40" rx="5" fill="#38bdf8" opacity="0.6" transform="rotate(10 140 80)" class="floating" />
+                            <rect x="75" y="150" width="10" height="30" rx="3" fill="#a855f7" opacity="0.7" class="floating" />
+                            <rect x="115" y="150" width="10" height="30" rx="3" fill="#a855f7" opacity="0.7" class="floating" />
+                            <circle cx="80" cy="180" r="8" fill="#f472b6" class="floating" />
+                            <circle cx="120" cy="180" r="8" fill="#f472b6" class="floating" />
                         </svg>
                     </div>
                     
@@ -535,7 +541,7 @@
                     <div class="bg-slate-900 p-4 rounded-xl border border-pink-800">
                         <div class="flex items-center mb-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29-3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+                                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
                             </svg>
                             <h3 class="text-pink-400 font-bold tech-font" data-lang-key="certificate_title">SERTİFİKA</h3>
                         </div>
@@ -618,6 +624,12 @@
                                             <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.616 16.894a1 1 0 01-1.396.064 6.002 6.002 0 000-8.512 1 1 0 011.414-1.414 8.002 8.002 0 010 11.339z" clip-rule="evenodd" />
                                         </svg>
                                         <span data-lang-key="listen_story_button">DİNLE</span>
+                                    </button>
+                                    <button id="btn-toggle-story" class="btn-nav bg-gradient-to-r from-pink-600 to-red-600 text-white rounded-lg px-5 py-2 font-medium shadow-sm hover:from-pink-700 hover:to-red-700 tech-font ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M7 3a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 00-1-1H7zM7 7a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1V8a1 1 0 00-1-1H7zM7 11a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1v-1a1 1 0 00-1-1H7zM7 15a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1v-1a1 1 0 00-1-1H7zM11 3a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1V4a1 1 0 00-1-1h-2zM11 7a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1V8a1 1 0 00-1-1h-2zM11 11a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1v-1a1 1 0 00-1-1h-2zM11 15a1 1 0 00-1 1v1a1 1 0 001 1h2a1 1 0 001-1v-1a1 1 0 00-1-1H7z" />
+                                        </svg>
+                                        <span id="toggle-story-button-text" data-lang-key="toggle_story_button">AI ile Oluştur</span>
                                     </button>
                                 </div>
                                 <div class="mt-4 text-center">
@@ -940,7 +952,7 @@
                         <span data-lang-key="prev_button">ÖNCEKİ</span>
                     </button>
                     <span class="bg-gradient-to-r from-purple-900 to-pink-900 text-white py-2 px-4 rounded-full text-sm font-bold tech-font">
-                        <span data-lang-key="riddle_count_label">BİLMECE</span>: <span id="riddle-count">0</span>/3
+                        <span data-lang-key="riddle_count_label">BİLMECE</span>: <span id="riddle-count">0</span>/<span id="riddle-total">0</span>
                     </span>
                     <button id="btn-next-riddle" class="btn-nav bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg px-5 py-2 font-medium shadow-sm hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed tech-font">
                         <span data-lang-key="next_button">SONRAKİ</span>
@@ -1106,6 +1118,8 @@
             const btnKnown = document.getElementById('btn-known');
             const btnUnknown = document.getElementById('btn-unknown');
             const btnListenStory = document.getElementById('btn-listen-story'); 
+            const btnToggleStory = document.getElementById('btn-toggle-story'); // New button for alternative story
+            const toggleStoryButtonText = document.getElementById('toggle-story-button-text'); // Text element for the toggle button
 
             // Ask Robi elements
             const robiQuestionInput = document.getElementById('robi-question-input');
@@ -1132,7 +1146,7 @@
 
             // AI Invention Idea Generator elements
             const inventionTopicInput = document.getElementById('invention-topic-input');
-            const generateInventionBtn = document.getElementById('generate-invention-btn');
+            const generateInventionBtn = document = document.getElementById('generate-invention-btn');
             const inventionText = document.getElementById('invention-text');
             const inventionLoadingIndicator = document.getElementById('invention-loading-indicator');
 
@@ -1150,6 +1164,7 @@
             const btnPrevRiddle = document.getElementById('btn-prev-riddle');
             const btnNextRiddle = document.getElementById('btn-next-riddle');
             const riddleCountDisplay = document.getElementById('riddle-count');
+            const riddleTotalDisplay = document.getElementById('riddle-total'); // New total riddles display
             const riddleLoadingIndicator = document.getElementById('riddle-loading-indicator');
             // New riddle hint elements
             const btnRiddleHint = document.getElementById('btn-riddle-hint');
@@ -1199,10 +1214,11 @@
             let currentCardIndex = 0;
             let currentRiddleIndex = 0;
             let currentLanguage = 'tr'; // Default language
+            let isPrimaryStory = true; // For toggling between primary and alternative story
 
             let knownCards = new Set(); // Stores indices of learning cards marked as "Anladım"
             let unknownCards = new Set(); // Stores indices of learning cards marked as "Tekrar"
-            let solvedRiddles = new Set(); // Stores indices of solved riddles
+            let solvedRiddles = new Set(); // Stores indices of solved riddles (conceptIndex_riddleIndex)
             let matchedPairs = new Set(); // Stores IDs of matched pairs in matching game
 
             // Matching game specific state
@@ -1235,6 +1251,7 @@
                     'flip_card_hint': 'HİKAYEYİ OKUMAK İÇİN KARTI ÇEVİR',
                     'listen_story_button': 'DİNLE', 
                     'listening_story_button': 'Dinleniyor...',
+                    'toggle_story_button': 'AI ile Oluştur', // Updated text
                     'prev_button': 'ÖNCEKİ',
                     'next_button': 'SONRAKİ',
                     'understood_button': 'ANLADIM',
@@ -1333,6 +1350,8 @@
                     'riddles_complete_message': 'Harika! Tüm bilmeceleri çözdün!',
                     'matching_complete_message': 'Muhteşem! Tüm çiftleri eşleştirdin!',
                     'main_menu_button': 'ANA MENÜ',
+                    'generating_story': 'Hikaye Oluşturuluyor...',
+                    'story_generation_error': 'Hikaye oluşturulurken bir hata oluştu. Lütfen tekrar dene.'
                 },
                 'en': {
                     'welcome_title': 'AI ADVENTURE',
@@ -1358,6 +1377,7 @@
                     'flip_card_hint': 'FLIP THE CARD TO READ THE STORY',
                     'listen_story_button': 'LISTEN', 
                     'listening_story_button': 'Listening...',
+                    'toggle_story_button': 'Generate with AI', // Updated text
                     'prev_button': 'PREVIOUS',
                     'next_button': 'NEXT',
                     'understood_button': 'UNDERSTOOD',
@@ -1406,17 +1426,17 @@
                     'invention_no_topic': 'Please enter an invention topic!',
                     'invention_api_error': 'An error occurred while generating the invention idea. Please try again.',
                     'ai_game_idea_title': '✨ AI Game Idea',
-                    'game_theme_prompt': 'What topic would you like a game idea for?',
-                    'game_theme_placeholder': 'Ex: uzay, hayvanlar, macera',
+                    'game_theme_prompt': 'Hangi konuda oyun fikri istersin?',
+                    'game_theme_placeholder': 'Örn: uzay, hayvanlar, macera',
                     'generate_game_idea_button': 'OYUN FİKRİ OLUŞTUR ✨',
                     'game_idea_placeholder': 'Oyun fikrin burada belirecek...',
                     'game_idea_loading': 'Oyun fikri oluşturuluyor...',
                     'game_idea_no_theme': 'Lütfen bir oyun teması girin!',
-                    'game_idea_api_error': 'An error occurred while generating the game idea. Please try again.',
-                    'riddle_title': 'YAPAY ZEKA BİLMECELERİ',
-                    'riddle_intro': 'Yapay zeka bilginizi test etme zamanı! Aşağıdaki bilmeceyi çözebilir misin?',
-                    'riddle_input_placeholder': 'Cevabını buraya yaz...',
-                    'answer_button': 'CEVAPLA',
+                    'game_idea_api_error': 'Oyun fikri oluşturulurken bir hata oluştu. Lütfen tekrar dene.',
+                    'riddle_title': 'AI RIDDLES',
+                    'riddle_intro': 'Time to test your AI knowledge! Can you solve the riddle below?',
+                    'riddle_input_placeholder': 'Type your answer here...',
+                    'answer_button': 'ANSWER',
                     'riddle_hint_button': 'GET HINT',
                     'riddle_hint_loading': 'Generating hint...',
                     'riddle_hint_error': 'An error occurred while generating a hint.',
@@ -1456,6 +1476,8 @@
                     'riddles_complete_message': 'Great! You\'ve solved all the riddles!',
                     'matching_complete_message': 'Fantastic! You\'ve matched all the pairs!',
                     'main_menu_button': 'MAIN MENU',
+                    'generating_story': 'Generating Story...',
+                    'story_generation_error': 'An error occurred while generating the story. Please try again.'
                 }
             };
 
@@ -1478,6 +1500,15 @@
                         tr: "Bir gün küçük robot Zeka, çiçekleri sulamayı öğrenmek istedi. Anneannesi her sabah çiçekleri suluyordu. Zeka dikkatle izledi, sonra da aynısını yaptı! Her gün çiçekler artık Zeka’nın sayesinde açıyordu. Çünkü o artık öğrendi—tıpkı insanlar gibi!",
                         en: "One day, a small robot named Zeka wanted to learn how to water flowers. His grandmother watered the flowers every morning. Zeka watched carefully, then did the same! Every day, the flowers now bloomed thanks to Zeka. Because he had learned—just like humans!"
                     },
+                    altStoryTitle: {
+                        tr: "Akıllı Oyuncak Ayı",
+                        en: "Smart Teddy Bear"
+                    },
+                    altStoryText: {
+                        tr: "Minik Ayı Balo, en sevdiği oyuncaktı. Balo, Ayşe'nin sesini tanıyor, 'Seni seviyorum!' dediğinde karşılık veriyordu. Ayşe, Balo'nun nasıl bu kadar akıllı olduğunu merak etti. Meğer Balo'nun içinde, insan gibi düşünebilen minik bir beyin varmış!",
+                        en: "Little Bear Balo was her favorite toy. Balo recognized Ayşe's voice and responded when she said 'I love you!' Ayşe wondered how Balo could be so smart. It turned out Balo had a tiny brain inside that could think like a human!"
+                    },
+                    generatedAltStory: { tr: null, en: null }, // To store AI-generated story
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
@@ -1491,7 +1522,19 @@
                             <circle cx="130" cy="40" r="10" fill="#a855f7" opacity="0.3" />
                             <path d="M70 40 Q100 10 130 40" stroke="#a855f7" stroke-width="5" fill="none" opacity="0.3" />
                         </svg>
-                    `
+                    `,
+                    riddles: [
+                        {
+                            question: { tr: "Ben bir beyin gibiyim ama bilgisayardayım. Öğrenirim, düşünürüm, bazen de oynarım. Adım ne?", en: "I'm like a brain but in a computer. I learn, I think, sometimes I even play. What's my name?" },
+                            hint: { tr: "İki kelimeden oluşurum, ilk kelimem 'Y' ile başlar.", en: "I consist of two words, the first starts with 'A'." },
+                            answer: "yapay zeka"
+                        },
+                        {
+                            question: { tr: "Robotlar ve akıllı telefonlar benimle çalışır. Onlara ne yapacaklarını söylerim. Ben neyim?", en: "Robots and smartphones work with me. I tell them what to do. What am I?" },
+                            hint: { tr: "Benimle birlikte 'zeka' kelimesi de kullanılır.", en: "The word 'intelligence' is also used with me." },
+                            answer: "yapay zeka"
+                        }
+                    ]
                 },
                 {
                     title: {
@@ -1510,6 +1553,15 @@
                         tr: "Maya, bilgisayara kedilerin ve köpeklerin fotoğraflarını gösterdi. Başta bilgisayar karıştırdı. Ama ne kadar çok resim gösterildiyse, o kadar iyi öğrendi. Sonunda bilgisayar “Bu bir kedi!” demeyi başardı.",
                         en: "Maya showed the computer pictures of cats and dogs. At first, the computer got confused. But the more pictures it was shown, the better it learned. Finally, the computer managed to say, 'This is a cat!'"
                     },
+                    altStoryTitle: {
+                        tr: "Robot Ressam",
+                        en: "Robot Painter"
+                    },
+                    altStoryText: {
+                        tr: "Robot Ressam, ilk başta sadece düz çizgiler çizebiliyordu. Ama ona çok sayıda çiçek resmi gösterildi. Her resimden sonra daha güzel çiçekler çizmeye başladı. Artık harika tablolar yapabiliyor!",
+                        en: "Robot Painter could only draw straight lines at first. But he was shown many flower pictures. After each picture, he started drawing more beautiful flowers. Now he can create amazing paintings!"
+                    },
+                    generatedAltStory: { tr: null, en: null }, // To store AI-generated story
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <path d="M100 20 C130 20, 140 50, 120 70 L120 130 C140 150, 130 180, 100 180 C70 180, 60 150, 80 130 L80 70 C60 50, 70 20, 100 20 Z" fill="#a855f7" opacity="0.2" />
@@ -1521,7 +1573,19 @@
                             <circle cx="130" cy="160" r="10" fill="#38bdf8" opacity="0.3" />
                             <path d="M70 160 Q100 190 130 160" stroke="#38bdf8" stroke-width="5" fill="none" opacity="0.3" />
                         </svg>
-                    `
+                    `,
+                    riddles: [
+                        {
+                            question: { tr: "Resimler gösterince öğrenirim, hatalarımı düzeltirim. Beni eğiten kim, biliyor musun?", en: "I learn by being shown pictures, I correct my mistakes. Do you know who trains me?" },
+                            hint: { tr: "Bilgisayarların akıllanma şekli.", en: "How computers get smarter." },
+                            answer: "makine öğrenmesi"
+                        },
+                        {
+                            question: { tr: "Deneyimden ders çıkarırım, her yeni bilgiyle daha iyi olurum. Benim adım ne?", en: "I learn from experience, I get better with every new piece of information. What's my name?" },
+                            hint: { tr: "Bilgisayarların kendi kendine öğrenmesi.", en: "Computers learning by themselves." },
+                            answer: "makine öğrenmesi"
+                        }
+                    ]
                 },
                 {
                     title: {
@@ -1533,13 +1597,22 @@
                         en: "An algorithm is a step-by-step plan to do a task."
                     },
                     storyTitle: {
-                        tr: "Arda'nın Kek Tarifi",
-                        en: "Arda's Cake Recipe"
+                        tr: "Anıl'ın Kek Tarifi", // Changed from Arda
+                        en: "Anıl's Cake Recipe" // Changed from Arda
                     },
                     storyText: {
-                        tr: "Arda kek yapmak istiyordu. Annesi ona tarif verdi: 1. Yumurtayı kır, 2. Şekeri ekle, 3. Karıştır… İşte bu bir algoritmaydı! Adım adım yapınca kek harika oldu.",
-                        en: "Arda wanted to bake a cake. His mother gave him a recipe: 1. Crack the egg, 2. Add sugar, 3. Mix… This was an algorithm! The cake turned out great when he followed the steps one by one."
+                        tr: "Anıl kek yapmak istiyordu. Annesi ona tarif verdi: 1. Yumurtayı kır, 2. Şekeri ekle, 3. Karıştır… İşte bu bir algoritmaydı! Adım adım yapınca kek harika oldu.", // Changed from Arda
+                        en: "Anıl wanted to bake a cake. His mother gave him a recipe: 1. Crack the egg, 2. Add sugar, 3. Mix… This was an algorithm! The cake turned out great when he followed the steps one by one." // Changed from Arda
                     },
+                    altStoryTitle: {
+                        tr: "Robot Temizlikçi",
+                        en: "Robot Cleaner"
+                    },
+                    altStoryText: {
+                        tr: "Temizlikçi robot Rumi, evi süpürmek için bir plan izler. Önce salonu, sonra mutfağı, en son da odaları süpürür. Bu plan sayesinde her yer pırıl pırıl olur. Rumi'nin planına ne denir?",
+                        en: "Cleaning robot Rumi follows a plan to sweep the house. First the living room, then the kitchen, and finally the bedrooms. Thanks to this plan, everything becomes spotless. What is Rumi's plan called?"
+                    },
+                    generatedAltStory: { tr: null, en: null }, // To store AI-generated story
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <rect x="50" y="30" width="100" height="140" rx="15" fill="#38bdf8" opacity="0.2" />
@@ -1555,7 +1628,19 @@
                             <circle cx="100" cy="100" r="40" stroke="#a855f7" stroke-width="2" fill="none" opacity="0.3" />
                             <path d="M80 120 L100 135 L120 120" stroke="#a855f7" stroke-width="3" fill="none" opacity="0.3" />
                         </svg>
-                    `
+                    `,
+                    riddles: [
+                        {
+                            question: { tr: "Adım adım yürürüm, Her işin bir sırasını bilirim. Tarifim olmadan iş yapamam!", en: "I walk step by step, I know the order of every task. I can't do anything without my recipe!" },
+                            hint: { tr: "“A” harfiyle başlar.", en: "Starts with the letter 'A'." },
+                            answer: "algoritma"
+                        },
+                        {
+                            question: { tr: "Bir işi yapmak için sıralı talimatlar veririm. Tıpkı bir yemek tarifi gibiyim. Ben neyim?", en: "I give sequential instructions to do a task. I'm like a cooking recipe. What am I?" },
+                            hint: { tr: "Bilgisayarların takip ettiği yol.", en: "The path computers follow." },
+                            answer: "algoritma"
+                        }
+                    ]
                 },
                 {
                     title: {
@@ -1574,6 +1659,15 @@
                         tr: "Bir sabah Ayça’nın diş fırçası konuştu: “Hazır mısın fırçalamaya?” Bu konuşan robot diş fırçasıydı! Ayça her sabah onunla birlikte dişlerini fırçalıyordu. Hem eğleniyordu hem de temiz dişleri oluyordu!",
                         en: "One morning, Ayça's toothbrush spoke: 'Are you ready to brush?' It was her talking robot toothbrush! Ayça brushed her teeth with it every morning. She had fun and clean teeth!"
                     },
+                    altStoryTitle: {
+                        tr: "Uzaylı Yardımcı",
+                        en: "Alien Helper"
+                    },
+                    altStoryText: {
+                        tr: "Uzay gemisinde küçük bir robot var. Kaptan uyurken o gemiyi temizliyor, yemek hazırlıyor ve hatta yıldız haritası çıkarıyor. Kaptan uyandığında her şey hazır oluyor. Bu robot, kaptanın en iyi yardımcısı!",
+                        en: "There's a small robot on the spaceship. While the captain sleeps, it cleans the ship, prepares food, and even charts the stars. When the captain wakes up, everything is ready. This robot is the captain's best helper!"
+                    },
+                    generatedAltStory: { tr: null, en: null }, // To store AI-generated story
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <path d="M50 150 L100 50 L150 150 Z" fill="#38bdf8" opacity="0.2" />
@@ -1586,7 +1680,19 @@
                             <path d="M50 150 L30 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
                             <path d="M150 150 L170 170" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.3" />
                         </svg>
-                    `
+                    `,
+                    riddles: [
+                        {
+                            question: { tr: "İnsan değilim, ama işler yaparım, Bazen konuşur, bazen de süpürürüm.", en: "I am not human, but I do tasks, Sometimes I talk, sometimes I vacuum." },
+                            hint: { tr: "“R” harfiyle başlar.", en: "Starts with the letter 'R'." },
+                            answer: "robot"
+                        },
+                        {
+                            question: { tr: "Birçok işi yapabilen, demir ve kablolardan oluşan bir makineyim. Ben neyim?", en: "I am a machine made of metal and wires, capable of doing many tasks. What am I?" },
+                            hint: { tr: "Bazen fabrikalarda, bazen evlerdeyim.", en: "Sometimes I'm in factories, sometimes in homes." },
+                            answer: "robot"
+                        }
+                    ]
                 },
                 {
                     title: {
@@ -1605,6 +1711,15 @@
                         tr: "Deniz, 'Bugün hava nasıl?' diye odasına seslendi. Küçük bir kutu yanıtladı: 'Bugün hava güneşli.' Bu kutu, onun sesli asistanıydı! O artık Deniz’in hava durumunu, şarkısını ve hikayesini bile biliyordu!",
                         en: "Deniz called out to his room, 'How's the weather today?' A small box replied: 'The weather is sunny today.' This box was his voice assistant! It now knew Deniz's weather, songs, and even stories!"
                     },
+                    altStoryTitle: {
+                        tr: "Akıllı Hoparlör",
+                        en: "Smart Speaker"
+                    },
+                    altStoryText: {
+                        tr: "Elif, 'Bana bir masal anlat!' dediğinde, küçük bir hoparlör hemen masal anlatmaya başladı. Elif'in sorularına cevap veriyor, hatta en sevdiği şarkıları bile çalıyordu. Bu akıllı hoparlör, Elif'in en iyi arkadaşı oldu!",
+                        en: "When Elif said, 'Tell me a fairy tale!', a small speaker immediately started telling a story. It answered Elif's questions and even played her favorite songs. This smart speaker became Elif's best friend!"
+                    },
+                    generatedAltStory: { tr: null, en: null }, // To store AI-generated story
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <circle cx="100" cy="100" r="80" fill="#38bdf8" opacity="0.1" />
@@ -1618,59 +1733,36 @@
                             <line x1="60" y1="100" x2="140" y2="100" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" opacity="0.5" />
                             <circle cx="100" cy="100" r="10" fill="#38bdf8" class="pulse" />
                         </svg>
-                    `
+                    `,
+                    riddles: [
+                        {
+                            question: { tr: "Ben konuşurum, cevap veririm, Bazen şarkı bile söylerim. Sesle çalışırım, adım ne, bilir misin?", en: "I speak, I answer, Sometimes I even sing. I work with sound, do you know my name?" },
+                            hint: { tr: "“S” harfiyle başlar.", en: "Starts with the letter 'V'." },
+                            answer: "sesli asistan"
+                        },
+                        {
+                            question: { tr: "Bana seslenince hemen cevap veririm. Hava durumunu, şarkıları ve hikayeleri bilirim. Ben neyim?", en: "When you call me, I answer right away. I know the weather, songs, and stories. What am I?" },
+                            hint: { tr: "Telefonda veya hoparlörde yaşarım.", en: "I live in a phone or a speaker." },
+                            answer: "sesli asistan"
+                        }
+                    ]
                 }
             ];
 
-            // Riddles data - now with prompts for LLM
-            const riddles = [
-                {
-                    question: {
-                        tr: "Ben konuşurum, cevap veririm, Bazen şarkı bile söylerim. Sesle çalışırım, adım ne, bilir misin?",
-                        en: "I speak, I answer, Sometimes I even sing. I work with sound, do you know my name?"
-                    },
-                    hint: {
-                        tr: "“S” harfiyle başlar.",
-                        en: "Starts with the letter 'V'."
-                    },
-                    answer: "sesli asistan"
-                },
-                {
-                    question: {
-                        tr: "Adım adım yürürüm, Her işin bir sırasını bilirim. Tarifim olmadan iş yapamam!",
-                        en: "I walk step by step, I know the order of every task. I can't do anything without my recipe!"
-                    },
-                    hint: {
-                        tr: "“A” harfiyle başlar.",
-                        en: "Starts with the letter 'A'."
-                    },
-                    answer: "algoritma"
-                },
-                {
-                    question: {
-                        tr: "İnsan değilim, ama işler yaparım, Bazen konuşur, bazen de süpürürüm.",
-                        en: "I am not human, but I do tasks, Sometimes I talk, sometimes I vacuum."
-                    },
-                    hint: {
-                        tr: "“R” harfiyle başlar.",
-                        en: "Starts with the letter 'R'."
-                    },
-                    answer: "robot"
-                }
-            ];
-
-            // Matching game data (pairs of concept and description)
-            const matchingPairs = [
-                { id: 1, concept: { tr: "Yapay Zeka", en: "Artificial Intelligence" }, description: { tr: "Zeka robot çiçekleri sulamayı öğrendi.", en: "Zeka the robot learned to water flowers." } },
-                { id: 2, concept: { tr: "Algoritma", en: "Algorithm" }, description: { tr: "Adım adım kek tarifi uygulandı.", en: "Cake recipe applied step by step." } },
-                { id: 3, concept: { tr: "Sesli Asistan", en: "Voice Assistant" }, description: { tr: "Hava durumunu cevaplayan konuşan kutu.", en: "Talking box that answers the weather." } }
-            ];
+            // Flatten all riddles for the riddle game, limiting to 5
+            const allRiddles = aiConcepts.flatMap((concept, conceptIndex) => 
+                concept.riddles.map((riddle, riddleIndex) => ({
+                    ...riddle,
+                    conceptIndex: conceptIndex,
+                    riddleIndex: riddleIndex
+                }))
+            ).slice(0, 5); // Limit to the first 5 riddles
 
             // Overall progress calculation
             const totalLearningCards = aiConcepts.length;
-            const totalRiddles = riddles.length;
-            const totalMatchingPairs = matchingPairs.length; // Number of pairs
-            const overallTotalProgressItems = totalLearningCards + totalRiddles + totalMatchingPairs; // Each pair counts as one item for progress
+            const totalRiddles = allRiddles.length; // Total number of all riddles (now 5)
+            const totalMatchingPairs = 4; // Fixed at 4 pairs for the matching game (8 cards)
+            const overallTotalProgressItems = totalLearningCards + totalRiddles + totalMatchingPairs; 
 
             // Function to generate random stars
             function generateStars() {
@@ -1739,6 +1831,8 @@
                     updateLearningCard();
                 } else if (currentSection === 'riddles') {
                     loadRiddle(); // Re-load riddle to get it in the correct language
+                } else if (currentSection === 'matching') {
+                    initializeMatchingGame(); // Re-initialize matching game for correct language
                 }
                 // Update user name display if available
                 if (userNameDisplay.textContent) {
@@ -1772,8 +1866,26 @@
                 cardFrontTitle.textContent = card.title[currentLanguage];
                 cardFrontText.textContent = card.text[currentLanguage];
                 cardFrontSvg.innerHTML = card.svg; // Set innerHTML for SVG
-                cardBackTitle.textContent = card.storyTitle[currentLanguage];
-                cardBackText.textContent = card.storyText[currentLanguage];
+
+                // Set story based on isPrimaryStory flag or generated story
+                if (isPrimaryStory) {
+                    cardBackTitle.textContent = card.storyTitle[currentLanguage];
+                    cardBackText.textContent = card.storyText[currentLanguage];
+                    toggleStoryButtonText.textContent = translations[currentLanguage]['toggle_story_button']; // "AI ile Oluştur"
+                } else {
+                    if (card.generatedAltStory[currentLanguage]) {
+                        // If AI story already generated, display it
+                        cardBackTitle.textContent = translations[currentLanguage]['toggle_story_button']; // Title for AI generated story
+                        cardBackText.textContent = card.generatedAltStory[currentLanguage];
+                        toggleStoryButtonText.textContent = translations[currentLanguage]['toggle_story_button']; // Still "AI ile Oluştur"
+                    } else {
+                        // If not generated, show placeholder and trigger generation on click
+                        cardBackTitle.textContent = translations[currentLanguage]['toggle_story_button']; // Title for AI generated story
+                        cardBackText.textContent = translations[currentLanguage]['generating_story']; // Show loading message
+                        generateAlternativeStory(currentCardIndex); // Trigger generation
+                    }
+                }
+
                 cardBadge.textContent = `${translations[currentLanguage]['concept']} #${currentCardIndex + 1}`;
 
                 // Reset card flip state
@@ -1836,6 +1948,51 @@
                 synth.speak(speechUtterance);
                 playClickEffect();
             }
+
+            // --- Generate Alternative Story with AI ---
+            async function generateAlternativeStory(conceptIndex) {
+                const card = aiConcepts[conceptIndex];
+                const conceptTitle = card.title[currentLanguage];
+                const originalStory = card.storyText[currentLanguage];
+
+                cardBackText.textContent = translations[currentLanguage]['generating_story'];
+                btnToggleStory.disabled = true; // Disable button during generation
+                playClickEffect();
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: `Generate a short, child-friendly alternative story (around 80-120 words) about "${conceptTitle}". Make it different from the original story: "${originalStory}". The story should be in ${currentLanguage === 'tr' ? 'Turkish' : 'English'}.` }] });
+                    const payload = { contents: chatHistory };
+                    // API Key should be empty string
+                    const apiKey = ""; 
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        card.generatedAltStory[currentLanguage] = text; // Store the generated story
+                        cardBackText.textContent = text;
+                    } else {
+                        cardBackText.textContent = translations[currentLanguage]['story_generation_error'];
+                        card.generatedAltStory[currentLanguage] = translations[currentLanguage]['story_generation_error']; // Store error
+                    }
+                } catch (error) {
+                    console.error("Gemini API hatası:", error);
+                    cardBackText.textContent = translations[currentLanguage]['story_generation_error'];
+                    card.generatedAltStory[currentLanguage] = translations[currentLanguage]['story_generation_error']; // Store error
+                } finally {
+                    btnToggleStory.disabled = false; // Re-enable button
+                }
+            }
+
 
             // --- Robi AI Chat Function ---
             async function askRobi() {
@@ -2112,6 +2269,7 @@
                 gameScreen.classList.add('hidden');
                 riddleScreen.classList.remove('hidden');
                 currentSection = 'riddles';
+                riddleTotalDisplay.textContent = totalRiddles; // Update total riddles display
                 await loadRiddle(); // Await the riddle loading
                 playClickEffect();
             }
@@ -2122,13 +2280,17 @@
                 riddleFeedback.className = 'text-center mt-4 font-bold';
                 riddleHintText.textContent = ''; // Clear hint text
                 btnRiddleHint.disabled = false; // Enable hint button
-                riddleLoadingIndicator.classList.add('hidden'); // Hide loading for now, as question is pre-defined
-                submitRiddleAnswerBtn.disabled = solvedRiddles.has(currentRiddleIndex);
+                riddleLoadingIndicator.classList.add('hidden'); 
+                
+                const currentRiddle = allRiddles[currentRiddleIndex];
+                riddleQuestion.textContent = currentRiddle.question[currentLanguage];
+
+                // Check if the current riddle is already solved
+                const riddleId = `${currentRiddle.conceptIndex}_${currentRiddle.riddleIndex}`;
+                submitRiddleAnswerBtn.disabled = solvedRiddles.has(riddleId);
+
                 btnPrevRiddle.disabled = currentRiddleIndex === 0;
                 
-                // Set riddle question directly from data
-                riddleQuestion.textContent = riddles[currentRiddleIndex].question[currentLanguage];
-
                 riddleCountDisplay.textContent = solvedRiddles.size;
                 updateOverallProgress();
 
@@ -2139,27 +2301,31 @@
                     btnNextRiddle.addEventListener('click', () => {
                         showSectionCompleteMessage(translations[currentLanguage]['riddles_complete_message'], showMatchingGameScreen);
                     });
-                    createConfetti(); // Trigger confetti when all riddles are solved
+                    createConfetti(); 
                 } else {
                     btnNextRiddle.textContent = translations[currentLanguage]['next_button'];
-                    btnNextRiddle.removeEventListener('click', showMatchingGameScreen);
-                    btnNextRiddle.disabled = !solvedRiddles.has(currentRiddleIndex); // Disable if current riddle not solved
+                    btnNextRiddle.removeEventListener('click', showMatchingGameScreen); // Ensure old listener is removed
+                    // Only enable next if current riddle is solved and not the last riddle
+                    btnNextRiddle.disabled = !solvedRiddles.has(riddleId) || currentRiddleIndex === allRiddles.length - 1; 
                     btnNextRiddle.addEventListener('click', nextRiddle);
                 }
             }
 
             function checkRiddleAnswer() {
                 const userAnswer = riddleAnswerInput.value.trim().toLowerCase();
-                const correctAnswer = riddles[currentRiddleIndex].answer.toLowerCase();
+                const currentRiddle = allRiddles[currentRiddleIndex];
+                const correctAnswer = currentRiddle.answer.toLowerCase();
+                const riddleId = `${currentRiddle.conceptIndex}_${currentRiddle.riddleIndex}`;
                 playClickEffect();
 
                 if (userAnswer === correctAnswer) {
                     riddleFeedback.textContent = translations[currentLanguage]['riddle_correct'];
                     riddleFeedback.classList.remove('text-red-400');
                     riddleFeedback.classList.add('text-green-400');
-                    solvedRiddles.add(currentRiddleIndex);
+                    solvedRiddles.add(riddleId);
                     submitRiddleAnswerBtn.disabled = true;
                     btnRiddleHint.disabled = true; // Disable hint after solving
+                    
                     if (solvedRiddles.size === totalRiddles) {
                         btnNextRiddle.disabled = false;
                         btnNextRiddle.textContent = translations[currentLanguage]['proceed_to_matching'];
@@ -2167,7 +2333,7 @@
                         btnNextRiddle.addEventListener('click', () => {
                             showSectionCompleteMessage(translations[currentLanguage]['riddles_complete_message'], showMatchingGameScreen);
                         });
-                        createConfetti(); // Trigger confetti when all riddles are solved
+                        createConfetti(); 
                     } else {
                         btnNextRiddle.disabled = false; 
                     }
@@ -2175,7 +2341,7 @@
                     riddleFeedback.textContent = translations[currentLanguage]['riddle_incorrect'];
                     riddleFeedback.classList.remove('text-green-400');
                     riddleFeedback.classList.add('text-red-400');
-                    solvedRiddles.delete(currentRiddleIndex); 
+                    solvedRiddles.delete(riddleId); 
                     btnNextRiddle.disabled = true; 
                 }
                 riddleCountDisplay.textContent = solvedRiddles.size;
@@ -2192,7 +2358,7 @@
 
             async function nextRiddle() {
                 playClickEffect();
-                if (currentRiddleIndex < riddles.length - 1) {
+                if (currentRiddleIndex < allRiddles.length - 1) {
                     currentRiddleIndex++;
                     await loadRiddle();
                 }
@@ -2201,7 +2367,8 @@
             // --- Riddle Hint Function ---
             function getRiddleHint() {
                 playClickEffect();
-                riddleHintText.textContent = riddles[currentRiddleIndex].hint[currentLanguage];
+                const currentRiddle = allRiddles[currentRiddleIndex];
+                riddleHintText.textContent = currentRiddle.hint[currentLanguage];
                 btnRiddleHint.disabled = true; // Disable hint after showing
             }
 
@@ -2222,19 +2389,26 @@
                 lockBoard = false;
                 matchedPairs.clear(); 
 
-                const cards = [...matchingPairs.flatMap(pair => [
-                    { id: pair.id, text: pair.concept[currentLanguage], type: 'concept' },
-                    { id: pair.id, text: pair.description[currentLanguage], type: 'description' }
-                ])];
+                // Select 4 random concepts for the matching game (for 8 cards)
+                const shuffledConcepts = [...aiConcepts].sort(() => 0.5 - Math.random());
+                const selectedConcepts = shuffledConcepts.slice(0, 4); // Select 4 concepts
+
+                const cardsToMatch = [];
+                selectedConcepts.forEach((concept, index) => {
+                    // Use the concept title
+                    cardsToMatch.push({ id: concept.title[currentLanguage], text: concept.title[currentLanguage], type: 'concept' });
+                    // Use the first riddle from the concept
+                    cardsToMatch.push({ id: concept.title[currentLanguage], text: concept.riddles[0].question[currentLanguage], type: 'riddle' });
+                });
 
                 // Shuffle cards
-                cards.sort(() => Math.random() - 0.5);
+                cardsToMatch.sort(() => Math.random() - 0.5);
 
-                cards.forEach((cardData, index) => {
+                cardsToMatch.forEach((cardData, index) => {
                     const cardElement = document.createElement('div');
                     cardElement.classList.add('matching-card');
-                    cardElement.dataset.id = cardData.id;
-                    cardElement.dataset.type = cardData.type;
+                    cardElement.dataset.id = cardData.id; // Concept title as ID
+                    cardElement.dataset.type = cardData.type; // 'concept' or 'riddle'
                     cardElement.dataset.index = index; 
 
                     cardElement.innerHTML = `
@@ -2261,7 +2435,7 @@
                 if (lockBoard) return;
                 if (this === flippedCards[0]) return; 
 
-                this.classList.add('flipped');
+                this.classList.add('flipped'); // Apply flipped class directly to the matching-card
                 flippedCards.push(this);
 
                 if (flippedCards.length === 2) {
@@ -2272,11 +2446,12 @@
 
             function checkForMatch() {
                 const [firstCard, secondCard] = flippedCards;
+                // A match occurs if IDs are the same AND types are different (concept vs riddle)
                 const isMatch = firstCard.dataset.id === secondCard.dataset.id && firstCard.dataset.type !== secondCard.dataset.type;
 
                 if (isMatch) {
                     disableCards();
-                    matchedPairs.add(parseInt(firstCard.dataset.id)); 
+                    matchedPairs.add(firstCard.dataset.id); // Add the concept title as the matched ID
                     matchingFeedback.textContent = translations[currentLanguage]['matching_matched'];
                     matchingFeedback.classList.remove('text-red-400');
                     matchingFeedback.classList.add('text-green-400');
@@ -2292,7 +2467,7 @@
                     matchingFeedback.classList.remove('text-red-400');
                     matchingFeedback.classList.add('text-green-400');
                     btnCompleteMatching.classList.remove('hidden');
-                    createConfetti(); // Trigger confetti when all matching pairs are found
+                    createConfetti(); 
                     showSectionCompleteMessage(translations[currentLanguage]['matching_complete_message'], showCertificateScreen);
                 }
             }
@@ -2465,11 +2640,17 @@
             });
 
             btnListenStory.addEventListener('click', speakStory); 
+            btnToggleStory.addEventListener('click', () => {
+                playClickEffect();
+                isPrimaryStory = !isPrimaryStory; // Toggle the flag
+                updateLearningCard(); // Re-render the card with the new story (potentially triggering AI generation)
+            });
 
             btnPrev.addEventListener('click', () => {
                 playClickEffect();
                 if (currentCardIndex > 0) {
                     currentCardIndex--;
+                    isPrimaryStory = true; // Reset to primary story when navigating
                     updateLearningCard();
                 }
             });
@@ -2478,6 +2659,7 @@
                 playClickEffect();
                 if (currentCardIndex < aiConcepts.length - 1) {
                     currentCardIndex++;
+                    isPrimaryStory = true; // Reset to primary story when navigating
                     updateLearningCard();
                 } else if (knownCards.size === totalLearningCards) {
                     showSectionCompleteMessage(translations[currentLanguage]['learning_complete_message'], showRiddleScreen);
@@ -2517,6 +2699,10 @@
                         currentCardIndex = 0;
                         currentRiddleIndex = 0;
                         currentSection = 'intro'; // Go back to intro screen on full reset
+                        // Also reset generated alternative stories
+                        aiConcepts.forEach(concept => {
+                            concept.generatedAltStory = { tr: null, en: null };
+                        });
                         welcomeScreen.classList.remove('hidden');
                         initialIntroScreen.classList.remove('hidden'); // Show initial intro
                         nameInputSection.classList.add('hidden'); // Hide name input
@@ -2546,6 +2732,10 @@
                         currentCardIndex = 0;
                         currentRiddleIndex = 0;
                         currentSection = 'intro'; // Go back to intro screen on full reset
+                        // Also reset generated alternative stories
+                        aiConcepts.forEach(concept => {
+                            concept.generatedAltStory = { tr: null, en: null };
+                        });
                         welcomeScreen.classList.remove('hidden');
                         initialIntroScreen.classList.remove('hidden'); // Show initial intro
                         nameInputSection.classList.add('hidden'); // Hide name input
@@ -2573,6 +2763,10 @@
                         currentCardIndex = 0;
                         currentRiddleIndex = 0;
                         currentSection = 'intro'; // Go back to intro screen on full reset
+                        // Also reset generated alternative stories
+                        aiConcepts.forEach(concept => {
+                            concept.generatedAltStory = { tr: null, en: null };
+                        });
                         welcomeScreen.classList.remove('hidden');
                         initialIntroScreen.classList.remove('hidden'); // Show initial intro
                         nameInputSection.classList.add('hidden'); // Hide name input
@@ -2600,6 +2794,10 @@
                         currentCardIndex = 0;
                         currentRiddleIndex = 0;
                         currentSection = 'intro'; // Go back to intro screen on full reset
+                        // Also reset generated alternative stories
+                        aiConcepts.forEach(concept => {
+                            concept.generatedAltStory = { tr: null, en: null };
+                        });
                         welcomeScreen.classList.remove('hidden');
                         initialIntroScreen.classList.remove('hidden'); // Show initial intro
                         nameInputSection.classList.add('hidden'); // Hide name input
