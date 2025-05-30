@@ -350,6 +350,39 @@
             color: white;
         }
 
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            text-align: center;
+            color: #e2e8f0;
+            max-width: 90%;
+            width: 400px;
+            border: 2px solid #38bdf8;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
         /* Print specific styles */
         @media print {
             body > *:not(#certificate-screen) {
@@ -789,6 +822,17 @@
                     </div>
                 </div>
             </div>
+            
+            <div id="certificate-button-container" class="mt-8 pt-6 border-t border-slate-700 text-center hidden">
+                <button id="btn-get-certificate" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg px-8 py-4 font-bold text-lg shadow-lg hover:from-yellow-600 hover:to-orange-600 transition-all tech-font pulse">
+                    <span class="relative inline-block" data-lang-key="get_certificate_button">
+                        SERTİFİKANI AL!
+                        <span class="absolute top-0 right-0 -mt-2 -mr-2 bg-purple-400 text-xs rounded-full h-6 w-6 flex items-center justify-center">
+                            🌟
+                        </span>
+                    </span>
+                </button>
+            </div>
 
         </div>
         <footer class="mt-12 p-6 bg-slate-900 bg-opacity-90 rounded-3xl text-slate-400 text-center text-sm tech-font shadow-xl border border-slate-700">
@@ -933,6 +977,20 @@
         </div>
     </div>
 
+    <div id="custom-confirm-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p id="modal-message" class="text-lg mb-6"></p>
+            <div class="modal-buttons">
+                <button id="modal-confirm-btn" class="bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg px-6 py-2 font-medium shadow-sm hover:from-green-700 hover:to-emerald-700 tech-font">
+                    Evet
+                </button>
+                <button id="modal-cancel-btn" class="bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg px-6 py-2 font-medium shadow-sm hover:from-red-700 hover:to-orange-700 tech-font">
+                    Hayır
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Text-to-Speech API (can be outside DOMContentLoaded)
         const synth = window.speechSynthesis;
@@ -977,7 +1035,7 @@
             const btnNext = document.getElementById('btn-next');
             const btnKnown = document.getElementById('btn-known');
             const btnUnknown = document.getElementById('btn-unknown');
-            const btnListenStory = document.getElementById('btn-listen-story'); // New: Listen Story button
+            const btnListenStory = document.getElementById('btn-listen-story'); 
 
             // Ask Robi elements
             const robiQuestionInput = document.getElementById('robi-question-input');
@@ -1039,6 +1097,14 @@
             // Certificate screen buttons
             const btnBackToGame = document.getElementById('btn-back-to-game');
             const btnPrintCertificate = document.getElementById('btn-print-certificate');
+            const btnGetCertificate = document.getElementById('btn-get-certificate');
+            const certificateButtonContainer = document.getElementById('certificate-button-container');
+
+            // Custom Modal elements
+            const customConfirmModal = document.getElementById('custom-confirm-modal');
+            const modalMessage = document.getElementById('modal-message');
+            const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+            const modalCancelBtn = document.getElementById('modal-cancel-btn');
 
 
             // Game state variables
@@ -1081,7 +1147,8 @@
                     'child_friendly': 'ÇOCUK DOSTU',
                     'concept': 'KAVRAM',
                     'flip_card_hint': 'HİKAYEYİ OKUMAK İÇİN KARTI ÇEVİR',
-                    'listen_story_button': 'DİNLE', // New translation
+                    'listen_story_button': 'DİNLE', 
+                    'listening_story_button': 'Dinleniyor...',
                     'prev_button': 'ÖNCEKİ',
                     'next_button': 'SONRAKİ',
                     'understood_button': 'ANLADIM',
@@ -1161,7 +1228,9 @@
                     'about_text': 'Bu sayfada yer alan bilgiler, kaynak gösterilen içeriklerden derlenmiştir. Sertifikanın yasal bir geçerliliği yoktur, sadece eğitim amacıyla ve kar gütmeden hazırlanmıştır.',
                     'contact_title': 'İletişim',
                     'contact_message': 'Sorularınız veya geri bildirimleriniz için LinkedIn üzerinden iletişime geçebilirsiniz:',
-                    'all_rights_reserved': 'Tüm Hakları Saklıdır. Bu içerik eğitim amaçlıdır.'
+                    'all_rights_reserved': 'Tüm Hakları Saklıdır. Bu içerik eğitim amaçlıdır.',
+                    'modal_confirm_title': 'Onay',
+                    'modal_reset_message': 'Tüm ilerlemenizi sıfırlamak istediğinizden emin misiniz?'
                 },
                 'en': {
                     'welcome_title': 'AI ADVENTURE',
@@ -1185,7 +1254,8 @@
                     'child_friendly': 'CHILD FRIENDLY',
                     'concept': 'CONCEPT',
                     'flip_card_hint': 'FLIP THE CARD TO READ THE STORY',
-                    'listen_story_button': 'LISTEN', // New translation
+                    'listen_story_button': 'LISTEN', 
+                    'listening_story_button': 'Listening...',
                     'prev_button': 'PREVIOUS',
                     'next_button': 'NEXT',
                     'understood_button': 'UNDERSTOOD',
@@ -1265,17 +1335,19 @@
                     'about_text': 'The information on this page is compiled from referenced content. The certificate has no legal validity and is prepared for educational purposes only, without profit.',
                     'contact_title': 'Contact',
                     'contact_message': 'For questions or feedback, you can contact via LinkedIn:',
-                    'all_rights_reserved': 'All Rights Reserved. This content is for educational purposes.'
+                    'all_rights_reserved': 'All Rights Reserved. This content is for educational purposes.',
+                    'modal_confirm_title': 'Confirmation',
+                    'modal_reset_message': 'Are you sure you want to reset all your progress?'
                 }
             };
 
-            // AI Concepts data (learning cards)
+            // AI Concepts data (learning cards) - Simplified for 6-year-olds
             const aiConcepts = [
                 {
                     title: "Yapay Zeka Nedir?",
-                    text: "Merhaba! Ben Robot Robi. Yapay zeka, bilgisayarların insanlar gibi düşünmesini ve öğrenmesini sağlayan bir teknolojidir. Benim gibi robotlar, yapay zeka sayesinde seninle konuşabilir ve sorularını yanıtlayabilir.",
-                    storyTitle: "Robot Robi'nin Macerası",
-                    storyText: "Bir zamanlar, küçük bir robot olan Robi vardı. Robi, yapay zeka sayesinde her gün yeni şeyler öğreniyordu. Bir gün, bir çocuk ona \"2+2 kaç eder?\" diye sordu. Robi hemen \"4!\" diye cevap verdi. Sonra çocuk \"Peki, en sevdiğin renk ne?\" diye sordu. Robi düşündü ve \"Henüz bir renge karar vermedim, çünkü hala öğreniyorum!\" dedi. Yapay zeka, Robi'nin sorulara cevap vermesini ve yeni bilgiler öğrenmesini sağlıyordu. Tıpkı senin okulda öğrendiğin gibi, Robi de her gün yeni şeyler öğreniyor ve daha akıllı hale geliyordu.",
+                    text: "Merhaba! Ben Robi, senin robot arkadaşın. Yapay zeka, bilgisayarların akıllı olmasını sağlar. Tıpkı senin gibi, bilgisayarlar da öğrenebilir ve düşünebilir. Ben de yapay zeka sayesinde seninle konuşuyorum!",
+                    storyTitle: "Robi'nin Akıllı Beyni",
+                    storyText: "Bir zamanlar, Robi adında küçük bir robot vardı. Robi'nin içinde özel bir beyin vardı: Yapay Zeka! Bu beyin sayesinde Robi, her gün yeni şeyler öğreniyordu. Bir gün, bir çocuk ona '2 elma + 2 elma kaç eder?' diye sordu. Robi hemen '4 elma!' diye cevap verdi. Sonra çocuk 'Peki, en sevdiğin oyuncak ne?' diye sordu. Robi düşündü ve 'Henüz bir oyuncak seçmedim, çünkü hala öğreniyorum!' dedi. Yapay zeka, Robi'nin sorulara cevap vermesini ve yeni bilgiler öğrenmesini sağlıyordu. Tıpkı senin okulda öğrendiğin gibi, Robi de her gün yeni şeyler öğreniyor ve daha akıllı hale geliyordu.",
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <circle cx="100" cy="70" r="40" fill="#38bdf8" opacity="0.2" />
@@ -1293,9 +1365,9 @@
                 },
                 {
                     title: "Robotlar Nasıl Öğrenir?",
-                    text: "Robotlar, tıpkı senin gibi, deneyimlerden öğrenirler. Onlara ne kadar çok bilgi verirsek ve ne kadar çok pratik yaparlarsa, o kadar akıllı olurlar. Buna 'Makine Öğrenmesi' denir.",
-                    storyTitle: "Akıllı Köpek Robi",
-                    storyText: "Robi'nin yeni arkadaşı, bir robot köpek olan Data'ydı. Data, etraftaki eşyaları tanımayı öğreniyordu. İlk başta bir topu ve bir ayakkabıyı ayırt edemiyordu. Ama Robi ona sürekli 'Bu top, bu ayakkabı!' diye gösterdi. Data, her doğru bildiğinde 'Harika!' sesi duyuyordu. Zamanla Data, topu gördüğünde havlamayı, ayakkabıyı gördüğünde ise sessiz kalmayı öğrendi. Bu, Data'nın makine öğrenmesi sayesinde akıllanmasıydı!",
+                    text: "Robotlar da tıpkı senin gibi öğrenir! Onlara bir şeyleri çok gösterirsek, onu hatırlarlar. Buna 'Makine Öğrenmesi' denir. Çok tekrar, çok öğrenmek demek!",
+                    storyTitle: "Akıllı Köpek Data",
+                    storyText: "Robi'nin yeni arkadaşı, Data adında bir robot köpekti. Data, etraftaki eşyaları tanımayı öğreniyordu. İlk başta bir topu ve bir ayakkabıyı ayırt edemiyordu. Ama Robi ona sürekli 'Bu top, bu ayakkabı!' diye gösterdi. Data, her doğru bildiğinde 'Harika!' sesi duyuyordu. Zamanla Data, topu gördüğünde havlamayı, ayakkabıyı gördüğünde ise sessiz kalmayı öğrendi. Bu, Data'nın makine öğrenmesi sayesinde akıllanmasıydı! Tıpkı senin resimli kitaplardan yeni kelimeler öğrenmen gibi.",
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <path d="M100 20 C130 20, 140 50, 120 70 L120 130 C140 150, 130 180, 100 180 C70 180, 60 150, 80 130 L80 70 C60 50, 70 20, 100 20 Z" fill="#a855f7" opacity="0.2" />
@@ -1311,9 +1383,9 @@
                 },
                 {
                     title: "Yapay Zeka Nelerde Kullanılır?",
-                    text: "Yapay zeka hayatımızın birçok yerinde var! Akıllı telefonlarımızda, oyunlarda, hatta arabalarda bile bize yardımcı oluyor. Örneğin, seni doğru yere götüren navigasyon uygulamaları yapay zeka kullanır.",
-                    storyTitle: "Akıllı Telefon Macerası",
-                    storyText: "Robi, akıllı telefonunda yeni bir oyun oynuyordu. Oyun, Robi'nin hareketlerini öğreniyor ve ona göre daha zorlu görevler veriyordu. Sonra annesiyle konuşmak için telefonunu kullandı. Telefon, annesinin sesini tanıyıp arama yapabiliyordu! Robi, 'Vay canına, yapay zeka ne kadar da çok şeye yarıyor!' diye düşündü. Akıllı telefonlar, yapay zeka sayesinde sesimizi tanıyıp, fotoğrafları düzenleyip, hatta bize yeni oyunlar önerebiliyor.",
+                    text: "Yapay zeka her yerde! Telefonunda oyun oynarken, annenin telefonuyla konuşurken, hatta babanın arabası sana yol gösterirken bile yapay zeka var. Bize çok yardım eder!",
+                    storyTitle: "Akıllı Telefonun Sırrı",
+                    storyText: "Robi, akıllı telefonunda yeni bir oyun oynuyordu. Oyun, Robi'nin hareketlerini öğreniyor ve ona göre daha zorlu görevler veriyordu. Sonra annesiyle konuşmak için telefonunu kullandı. Telefon, annesinin sesini tanıyıp arama yapabiliyordu! Robi, 'Vay canına, yapay zeka ne kadar da çok şeye yarıyor!' diye düşündü. Akıllı telefonlar, yapay zeka sayesinde sesimizi tanıyıp, fotoğrafları düzenleyip, hatta bize yeni oyunlar önerebiliyor. Tıpkı senin en sevdiğin oyuncağınla oynaman gibi, telefonlar da yapay zeka ile daha eğlenceli hale geliyor.",
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <rect x="50" y="30" width="100" height="140" rx="15" fill="#38bdf8" opacity="0.2" />
@@ -1333,9 +1405,9 @@
                 },
                 {
                     title: "Gelecekte Yapay Zeka",
-                    text: "Gelecekte yapay zeka daha da gelişecek! Belki de kendi kendine giden arabalar, hastalıkları teşhis eden robot doktorlar veya uzayı keşfeden akıllı uzay gemileri göreceğiz. Hayal gücümüzün sınırı yok!",
-                    storyTitle: "Uzay Macerası",
-                    storyText: "Robi, bir uzay gemisinde yapay zeka pilotu olarak görev yapıyordu. Geminin bilgisayarı, Robi'ye en güvenli rota hakkında bilgi veriyor, hatta uzaydaki yeni gezegenleri keşfetmesine yardımcı oluyordu. Bir gün, bilinmeyen bir gezegene indiler. Yapay zeka, gezegenin havasını analiz etti ve Robi'ye güvenli olduğunu söyledi. Robi, 'Yapay zeka olmasaydı, bu kadar uzağa asla gidemezdik!' diye düşündü. Gelecekte yapay zeka, bizi daha önce hiç gitmediğimiz yerlere götürebilir ve bilmediğimiz şeyleri keşfetmemize yardımcı olabilir.",
+                    text: "Gelecekte yapay zeka daha da büyülü olacak! Belki de kendi kendine giden arabalar, bizi iyileştiren robot doktorlar veya uzayda yeni yerler bulan akıllı gemiler göreceğiz. Hayal etmesi bile harika!",
+                    storyTitle: "Uzay Gemisi Macerası",
+                    storyText: "Robi, bir uzay gemisinde akıllı bir pilot olarak görev yapıyordu. Geminin bilgisayarı, Robi'ye en güvenli yolu söylüyor, hatta uzaydaki yeni gezegenleri bulmasına yardım ediyordu. Bir gün, hiç bilmedikleri bir gezegene indiler. Yapay zeka, gezegenin havasını inceledi ve Robi'ye güvenli olduğunu söyledi. Robi, 'Yapay zeka olmasaydı, bu kadar uzağa asla gidemezdik!' diye düşündü. Gelecekte yapay zeka, bizi daha önce hiç gitmediğimiz yerlere götürebilir ve bilmediğimiz şeyleri keşfetmemize yardımcı olabilir. Tıpkı senin en sevdiğin çizgi film kahramanları gibi, yapay zeka da harikalar yaratabilir!",
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <path d="M50 150 L100 50 L150 150 Z" fill="#38bdf8" opacity="0.2" />
@@ -1352,9 +1424,9 @@
                 },
                 {
                     title: "Yapay Zeka ve Biz",
-                    text: "Yapay zeka, dünyayı daha iyi bir yer haline getirmemize yardımcı olabilir. Ama en önemlisi, biz insanlar olarak yapay zekayı nasıl kullanacağımıza karar vermeliyiz. İyi amaçlar için kullanırsak, harika şeyler başarabiliriz!",
+                    text: "Yapay zeka, dünyayı daha iyi bir yer yapabilir. Ama onu iyi şeyler için kullanmak bizim elimizde. Eğer iyi kullanırsak, çok güzel işler başarabiliriz!",
                     storyTitle: "Dünyayı Kurtaran Yapay Zeka",
-                    storyText: "Robi, bir gün dünyayı kurtarmak için yapay zekayı kullanmaya karar verdi. Bir ormanda çıkan yangını durdurmak için yapay zeka destekli dronları gönderdi. Dronlar, yangının nerede olduğunu ve nasıl yayıldığını hızlıca tespit etti. Robi, bu bilgileri itfaiyecilere iletti ve yangın kısa sürede söndürüldü. Robi, 'Yapay zeka, doğru ellerde olduğunda gerçek bir süper kahraman olabilir!' diye düşündü. Yapay zeka, doğal afetlerle mücadele etmek, enerji tasarrufu sağlamak ve hatta yeni ilaçlar geliştirmek gibi birçok alanda bize yardımcı olabilir. Önemli olan, onu her zaman iyi niyetle kullanmaktır.",
+                    storyText: "Robi, bir gün dünyayı kurtarmak için yapay zekayı kullanmaya karar verdi. Bir ormanda çıkan yangını durdurmak için akıllı dronları gönderdi. Dronlar, yangının nerede olduğunu ve nasıl yayıldığını hemen buldu. Robi, bu bilgileri itfaiyecilere verdi ve yangın kısa sürede söndürüldü. Robi, 'Yapay zeka, doğru ellerde olduğunda gerçek bir süper kahraman olabilir!' diye düşündü. Yapay zeka, doğal afetlerle mücadele etmek, enerji tasarrufu sağlamak ve hatta yeni ilaçlar bulmak gibi birçok alanda bize yardımcı olabilir. Önemli olan, onu her zaman iyi niyetle kullanmaktır. Tıpkı senin arkadaşlarına yardım etmen gibi.",
                     svg: `
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class="w-40 h-40">
                             <circle cx="100" cy="100" r="80" fill="#38bdf8" opacity="0.1" />
@@ -1443,6 +1515,13 @@
                 progressPercent.textContent = Math.round(progressPercentage);
                 overallProgressCountDisplay.textContent = currentProgress;
                 overallTotalCountDisplay.textContent = overallTotalProgressItems;
+
+                // Show/hide "Get Certificate" button
+                if (knownCards.size === totalLearningCards && solvedRiddles.size === totalRiddles && matchedPairs.size === totalMatchingPairs) {
+                    certificateButtonContainer.classList.remove('hidden');
+                } else {
+                    certificateButtonContainer.classList.add('hidden');
+                }
             }
 
             // Function to update all text content based on current language
@@ -1533,7 +1612,7 @@
                 
                 speechUtterance.onstart = () => {
                     btnListenStory.disabled = true;
-                    btnListenStory.textContent = translations[currentLanguage]['listening_story_button'] || 'Dinleniyor...';
+                    btnListenStory.textContent = translations[currentLanguage]['listening_story_button'];
                 };
                 speechUtterance.onend = () => {
                     btnListenStory.disabled = false;
@@ -2051,6 +2130,31 @@
                 updateTextContent(); // Ensure text is updated on return
             }
 
+            // --- Custom Confirmation Modal Function ---
+            function showCustomConfirm(message, callback) {
+                modalMessage.textContent = message;
+                customConfirmModal.classList.remove('hidden');
+
+                const handleConfirm = () => {
+                    playClickEffect();
+                    customConfirmModal.classList.add('hidden');
+                    callback(true);
+                    modalConfirmBtn.removeEventListener('click', handleConfirm);
+                    modalCancelBtn.removeEventListener('click', handleCancel);
+                };
+
+                const handleCancel = () => {
+                    playClickEffect();
+                    customConfirmModal.classList.add('hidden');
+                    callback(false);
+                    modalConfirmBtn.removeEventListener('click', handleConfirm);
+                    modalCancelBtn.removeEventListener('click', handleCancel);
+                };
+
+                modalConfirmBtn.addEventListener('click', handleConfirm);
+                modalCancelBtn.addEventListener('click', handleCancel);
+            }
+
             // --- Click Effect Function (Sound and Vibration) ---
             function playClickEffect() {
                 // Play sound
@@ -2084,7 +2188,7 @@
                     updateTextContent(); // Update text for game screen
                 } else {
                     // Using a custom message instead of alert for better UX
-                    alert(translations[currentLanguage]['robi_no_question']); 
+                    showCustomConfirm(translations[currentLanguage]['robi_no_question'], () => {}); // Just show message, no action
                 }
             });
 
@@ -2093,7 +2197,7 @@
                 currentCardElement.classList.toggle('flipped');
             });
 
-            btnListenStory.addEventListener('click', speakStory); // New: Listen Story button event listener
+            btnListenStory.addEventListener('click', speakStory); 
 
             btnPrev.addEventListener('click', () => {
                 playClickEffect();
@@ -2133,25 +2237,27 @@
 
             btnReset.addEventListener('click', () => {
                 playClickEffect();
-                if (confirm(translations[currentLanguage]['confirm_reset'])) { 
-                    knownCards.clear();
-                    unknownCards.clear();
-                    solvedRiddles.clear();
-                    matchedPairs.clear();
-                    currentCardIndex = 0;
-                    currentRiddleIndex = 0;
-                    currentSection = 'intro'; // Go back to intro screen on full reset
-                    welcomeScreen.classList.remove('hidden');
-                    initialIntroScreen.classList.remove('hidden'); // Show initial intro
-                    nameInputSection.classList.add('hidden'); // Hide name input
-                    gameScreen.classList.add('hidden');
-                    riddleScreen.classList.add('hidden');
-                    matchingGameScreen.classList.add('hidden');
-                    certificateScreen.classList.add('hidden');
-                    updateLearningCard(); // This will reset card display
-                    updateOverallProgress(); // This will reset progress display
-                    updateTextContent(); // Ensure text is updated after reset
-                }
+                showCustomConfirm(translations[currentLanguage]['modal_reset_message'], (result) => {
+                    if (result) {
+                        knownCards.clear();
+                        unknownCards.clear();
+                        solvedRiddles.clear();
+                        matchedPairs.clear();
+                        currentCardIndex = 0;
+                        currentRiddleIndex = 0;
+                        currentSection = 'intro'; // Go back to intro screen on full reset
+                        welcomeScreen.classList.remove('hidden');
+                        initialIntroScreen.classList.remove('hidden'); // Show initial intro
+                        nameInputSection.classList.add('hidden'); // Hide name input
+                        gameScreen.classList.add('hidden');
+                        riddleScreen.classList.add('hidden');
+                        matchingGameScreen.classList.add('hidden');
+                        certificateScreen.classList.add('hidden');
+                        updateLearningCard(); // This will reset card display
+                        updateOverallProgress(); // This will reset progress display
+                        updateTextContent(); // Ensure text is updated after reset
+                    }
+                });
             });
 
             // Robi Chat Event Listeners
@@ -2217,6 +2323,9 @@
             } else {
                 console.error('Error: btn-print-certificate element not found!');
             }
+
+            // New "Get Certificate" button listener
+            btnGetCertificate.addEventListener('click', showCertificateScreen);
 
 
             // Initial setup
