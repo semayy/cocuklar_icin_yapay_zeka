@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Çocuklar İçin Yapay Zeka Macerası</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Orbitron:wght@400;500;600;700&display=swap');
+
+        
+
+        body {
+
+            font-family: 'Exo 2', sans-serif;
+
+            background-color: #0d1222; /* Slightly darker base for better contrast */
+
+            background-image: 
+
+                radial-gradient(circle at 25% 25%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+
+                radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+
+            color: #e2e8f0; /* Default text color for better readability */
+
+        }
+
+        
+
+        .tech-font {
+
+            font-family: 'Orbitron', sans-serif;
+
+        }
+
+        
+
+        .card {
+
+            perspective: 1000px;
+
+            height: 400px; /* Fixed height for consistency */
+
+            cursor: pointer;
+
+        }
+
+        
+
+        .card-inner {
+
+            position: relative;
+
+            width: 100%;
+
+            height: 100%;
+
+            transition: transform 0.8s;
+
+            transform-style: preserve-3d;
+
+        }
+
+        
+
+        .card.flipped .card-inner {
+
+            transform: rotateY(180deg);
+
+        }
+
+        
+
+        .card-front, .card-back {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+            -webkit-backface-visibility: hidden;
+
+            backface-visibility: hidden;
+
+            border-radius: 1.5rem;
+
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4); /* Enhanced shadow */
+
+            overflow: hidden;
+
+            display: flex;
+
+            flex-direction: column;
+
+            border: 3px solid; /* Thicker border */
+
+        }
+
+        
+
+        .card-front {
+
+            background: linear-gradient(135deg, #1a243a, #0d1222); /* Darker gradient */
+
+            border-image: linear-gradient(45deg, #38bdf8, #a855f7) 1; /* Gradient border */
+
+            color: #e2e8f0; /* Lighter text for contrast */
+
+        }
+
+        
+
+        .card-back {
+
+            background: linear-gradient(135deg, #1a243a, #0d1222); /* Darker gradient */
+
+            border-image: linear-gradient(45deg, #a855f7, #f472b6) 1; /* Different gradient border */
+
+            color: #e2e8f0; /* Lighter text for contrast */
+
+            transform: rotateY(180deg);
+
+        }
+
+        
+
+        .progress-bar {
+
+            height: 12px; /* Slightly thicker */
+
+            border-radius: 6px;
+
+            background: rgba(56, 189, 248, 0.25);
+
+            overflow: hidden;
+
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+
+        }
+
+        
+
+        .progress {
+
+            height: 100%;
+
+            background: linear-gradient(90deg, #38bdf8, #a855f7);
+
+            transition: width 0.5s ease;
+
+            border-radius: 6px;
+
+        }
+
+        
+
+        .btn-nav {
+
+            transition: all 0.3s ease;
+
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+            border: 1px solid transparent; /* Ensure border for hover effect */
+
+        }
+
+        
+
+        .btn-nav:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+
+            border-color: rgba(255,255,255,0.2);
+
+        }
+
+        
+
+        .btn-nav:active {
+
+            transform: translateY(0);
+
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+        }
+
+        
+
+        .character {
+
+            position: absolute;
+
+            bottom: -10px;
+
+            right: -10px;
+
+            width: 120px;
+
+            height: 120px;
+
+            transition: all 0.3s ease;
+
+        }
+
+        
+
+        .card:hover .character {
+
+            transform: translateY(-10px);
+
+        }
+
+        
+
+        .stars {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+            overflow: hidden;
+
+            z-index: -1;
+
+        }
+
+        
+
+        .star {
+
+            position: absolute;
+
+            background-color: white;
+
+            border-radius: 50%;
+
+            animation: twinkle 2s infinite;
+
+        }
+
+        
+
+        @keyframes twinkle {
+
+            0% { opacity: 0; }
+
+            50% { opacity: 1; }
+
+            100% { opacity: 0; }
+
+        }
+
+        
+
+        .confetti {
+
+            position: absolute;
+
+            width: 10px;
+
+            height: 10px;
+
+            opacity: 0;
+
+            background-color: var(--color);
+
+            border-radius: 50%;
+
+            animation: fall 3s ease-out forwards;
+
+            z-index: 9999;
+
+        }
+
+
+
+        @keyframes fall {
+
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+
+        }
+
+        
+
+        .badge {
+
+            position: absolute;
+
+            top: 15px;
+
+            right: 15px;
+
+            background: linear-gradient(45deg, #38bdf8, #a855f7);
+
+            color: white;
+
+            border-radius: 20px;
+
+            padding: 5px 12px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+
+            z-index: 10;
+
+        }
+
+        
+
+        .glow {
+
+            animation: glow 2s infinite alternate;
+
+        }
+
+        
+
+        @keyframes glow {
+
+            from {
+
+                box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+
+            }
+
+            to {
+
+                box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 0 30px rgba(168, 85, 247, 0.5);
+
+            }
+
+        }
+
+        
+
+        .floating {
+
+            animation: floating 3s infinite ease-in-out;
+
+        }
+
+        
+
+        @keyframes floating {
+
+            0% { transform: translateY(0px); }
+
+            50% { transform: translateY(-10px); }
+
+            100% { transform: translateY(0px); }
+
+        }
+
+        
+
+        .pulse {
+
+            animation: pulse 2s infinite;
+
+        }
+
+        
+
+        @keyframes pulse {
+
+            0% { transform: scale(1); }
+
+            50% { transform: scale(1.05); }
+
+            100% { transform: scale(1); }
+
+        }
+
+        
+
+        .tech-bg {
+
+            background-image: 
+
+                linear-gradient(rgba(13, 18, 34, 0.95), rgba(13, 18, 34, 0.95)), /* Darker overlay */
+
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2338bdf8' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+        }
+
+        
+
+        .circuit-border {
+
+            border-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2338bdf8' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E") 1;
+
+            border-width: 4px;
+
+            border-style: solid;
+
+        }
+
+        
+
+        .certificate {
+
+            background-image: 
+
+                linear-gradient(rgba(13, 18, 34, 0.95), rgba(13, 18, 34, 0.95)), /* Darker overlay */
+
+                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='white' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+            background-color: #0d1222;
+
+            border: 4px solid;
+
+            border-image: linear-gradient(45deg, #38bdf8, #a855f7, #f472b6, #38bdf8) 1;
+
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.5), 0 0 50px rgba(168, 85, 247, 0.5);
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+        
+
+        .certificate::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: -50%;
+
+            left: -50%;
+
+            width: 200%;
+
+            height: 200%;
+
+            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+
+            animation: rotate-glow 15s linear infinite;
+
+            z-index: -1;
+
+        }
+
+
+
+        @keyframes rotate-glow {
+
+            from { transform: rotate(0deg); }
+
+            to { transform: rotate(360deg); }
+
+        }
+
+
+
+        .typing-effect {
+
+            overflow: hidden;
+
+            border-right: .15em solid #38bdf8;
+
+            white-space: nowrap;
+
+            margin: 0 auto;
+
+            letter-spacing: .15em;
+
+            animation: 
+
+                typing 3.5s steps(40, end),
+
+                blink-caret .75s step-end infinite;
+
+        }
+
+        
+
+        @keyframes typing {
+
+            from { width: 0 }
+
+            to { width: 100% }
+
+        }
+
+        
+
+        @keyframes blink-caret {
+
+            from, to { border-color: transparent }
+
+            50% { border-color: #38bdf8; }
+
+        }
+
+        
+
+        .sound-wave {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 3px;
+
+            height: 20px;
+
+        }
+
+        
+
+        .sound-wave span {
+
+            display: block;
+
+            width: 3px;
+
+            height: 100%;
+
+            background: linear-gradient(to bottom, #38bdf8, #a855f7);
+
+            border-radius: 3px;
+
+            animation: sound-wave-animation 1.2s infinite ease-in-out;
+
+        }
+
+        
+
+        .sound-wave span:nth-child(2) { animation-delay: 0.2s; }
+
+        .sound-wave span:nth-child(3) { animation-delay: 0.4s; }
+
+        .sound-wave span:nth-child(4) { animation-delay: 0.6s; }
+
+        .sound-wave span:nth-child(5) { animation-delay: 0.8s; }
+
+        
+
+        @keyframes sound-wave-animation {
+
+            0%, 100% { height: 5px; }
+
+            50% { height: 20px; }
+
+        }
+
+        
+
+        .robot-eye {
+
+            animation: blink 4s infinite;
+
+        }
+
+        
+
+        @keyframes blink {
+
+            0%, 45%, 55%, 100% { height: 8px; }
+
+            50% { height: 1px; }
+
+        }
+
+
+
+        /* Matching Game Specific Styles */
+
+        .matching-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr); /* Adjusted for better mobile layout */
+
+            gap: 1rem;
+
+        }
+
+        @media (min-width: 768px) {
+
+            .matching-grid {
+
+                grid-template-columns: repeat(4, 1fr);
+
+            }
+
+        }
+
+
+
+        .matching-card {
+
+            background-color: #1a243a; /* Darker background */
+
+            border: 2px solid #38bdf8;
+
+            border-radius: 0.75rem;
+
+            height: 120px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 1rem; /* Adjusted font size for smaller cards */
+
+            font-weight: bold;
+
+            color: #e2e8f0; /* Lighter text for contrast */
+
+            cursor: pointer;
+
+            transform-style: preserve-3d;
+
+            transition: transform 0.6s;
+
+            position: relative;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); /* Enhanced shadow */
+
+            word-break: break-word; /* Allow text to break words */
+
+            padding: 0.5rem; /* Added padding */
+
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Text shadow for readability */
+
+        }
+
+
+
+        /* This is the key fix: when .matching-card has 'flipped' class, rotate it */
+
+        .matching-card.flipped {
+
+            transform: rotateY(180deg);
+
+        }
+
+
+
+        .matching-card .card-face {
+
+            position: absolute;
+
+            width: 100%;
+
+            height: 100%;
+
+            backface-visibility: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 0.75rem;
+
+            padding: 0.5rem;
+
+            text-align: center;
+
+        }
+
+
+
+        .matching-card .card-front-face {
+
+            transform: rotateY(0deg); /* Explicitly set for front face */
+
+            background: linear-gradient(135deg, #1a243a, #0d1222); /* Match card front */
+
+        }
+
+
+
+        .matching-card .card-back-face {
+
+            background: linear-gradient(135deg, #38bdf8, #a855f7);
+
+            transform: rotateY(180deg);
+
+            color: white;
+
+            font-size: 0.9rem; /* Slightly smaller font for descriptions */
+
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); /* Text shadow for readability */
+
+        }
+
+
+
+        .matching-card.matched {
+
+            pointer-events: none;
+
+            background: linear-gradient(135deg, #10b981, #059669);
+
+            border-color: #10b981;
+
+            color: white;
+
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.5);
+
+        }
+
+
+
+        /* Custom Modal Styles */
+
+        .modal-overlay {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            background-color: rgba(0, 0, 0, 0.85); /* Darker overlay */
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            z-index: 10000;
+
+        }
+
+
+
+        .modal-content {
+
+            background-color: #1a243a; /* Darker background */
+
+            padding: 2.5rem; /* More padding */
+
+            border-radius: 1.5rem; /* More rounded */
+
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.6); /* Enhanced shadow */
+
+            text-align: center;
+
+            color: #e2e8f0;
+
+            max-width: 90%;
+
+            width: 450px; /* Slightly wider */
+
+            border: 2px solid #38bdf8;
+
+            position: relative;
+
+            overflow: hidden;
+
+        }
+
+        .modal-content::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: -20px;
+
+            left: -20px;
+
+            right: -20px;
+
+            bottom: -20px;
+
+            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+
+            animation: rotate-glow 10s linear infinite;
+
+            z-index: -1;
+
+        }
+
+
+
+        .modal-buttons {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 1.5rem; /* More space between buttons */
+
+            margin-top: 2rem;
+
+        }
+
+
+
+        /* Print specific styles */
+
+        @media print {
+
+            body > *:not(#certificate-screen) {
+
+                display: none !important;
+
+            }
+
+            #certificate-screen {
+
+                display: block !important;
+
+                position: absolute;
+
+                top: 0;
+
+                left: 0;
+
+                width: 100%;
+
+                height: 100%;
+
+                margin: 0;
+
+                padding: 0;
+
+                box-shadow: none;
+
+                background-image: none; /* Remove background patterns for print */
+
+                background-color: white; /* White background for printing */
+
+                color: black; /* Black text for printing */
+
+            }
+
+            #certificate-screen .certificate {
+
+                border: none; /* Remove border for print */
+
+                background-image: none;
+
+                background-color: white;
+
+                color: black;
+
+                box-shadow: none;
+
+                padding: 20px;
+
+                height: 100%;
+
+                display: flex;
+
+                flex-direction: column;
+
+                justify-content;
+
+                align-items: center;
+
+            }
+
+            #certificate-screen .certificate h1, #certificate-screen .certificate p, #certificate-screen .certificate span {
+
+                color: black !important;
+
+                -webkit-print-color-adjust: exact; /* For printing background colors/gradients */
+
+                print-color-adjust: exact;
+
+            }
+
+            #certificate-screen .flex.justify-between.items-center.mb-6 {
+
+                display: none; /* Hide buttons in print view */
+
+            }
+
+        }
+
+
+
+        /* 3D Robot Canvas Styling */
+
+        #robot-canvas {
+
+            width: 100%;
+
+            height: 100%;
+
+            display: block;
+
+            border-radius: 1rem; /* Rounded corners for the canvas */
+
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); /* Subtle glow */
+
+        }
+
+    </style>
+
+</head>
+
+<body class="p-4 md:p-8">
+
+    <div class="stars" id="stars"></div>
+
+    
+
+    <div class="absolute top-4 right-4 z-50">
+
+        <button id="lang-toggle-tr" class="bg-gray-700 text-white px-3 py-1 rounded-l-lg text-sm font-bold hover:bg-gray-600" data-lang="tr">TR</button>
+
+        <button id="lang-toggle-en" class="bg-gray-800 text-white px-3 py-1 rounded-r-lg text-sm font-bold hover:bg-gray-600" data-lang="en">EN</button>
+
+    </div>
+
+
+
+    <div id="welcome-screen" class="max-w-5xl mx-auto">
+
+        <div class="bg-slate-800 bg-opacity-90 rounded-3xl p-6 md:p-8 shadow-xl tech-bg glow">
+
+            <div class="flex flex-col items-center justify-center py-8">
+
+                <div class="mb-6 relative">
+
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 blur-xl opacity-20 rounded-full"></div>
+
+                    <h1 class="tech-font text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 relative z-10 text-center" data-lang-key="welcome_title">
+
+                        YAPAY ZEKA MACERASI
+
+                    </h1>
+
+                </div>
+
+                
+
+                <div id="initial-intro-screen" class="w-full max-w-md mx-auto mb-8 relative text-center">
+
+                    <p class="text-cyan-300 text-center mb-6 text-lg" data-lang-key="intro_message">
+
+                        Çocuklar, ebeveynlerinizle birlikte misiniz? Eğer size eşlik edecek bir yetişkin varsa, haydi başlayalım!
+
+                    </p>
+
+                    <button 
+
+                        id="continue-intro-btn" 
+
+                        class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg px-8 py-3 font-medium shadow-sm hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center justify-center mx-auto"
+
+                        data-lang-key="continue_button"
+
+                    >
+
+                        DEVAM ET
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2" viewBox="0 0 20 20" fill="currentColor">
+
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4-4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+
+                        </svg>
+
+                    </button>
+
+                </div>
+
+
+
+                <div id="name-input-section" class="w-full max-w-md mx-auto mb-8 relative hidden">
+
+                    <div class="floating mb-8 w-40 h-40 mx-auto">
+
+                        <canvas id="robot-canvas"></canvas>
+
+                    </div>
+
+                    
+
+                    <p class="text-cyan-300 text-center mb-6" data-lang-key="welcome_intro">
+
+                        Merhaba genç kaşif! Yapay zeka dünyasına heyecan verici bir yolculuğa çıkmaya hazır mısın?
+
+                    </p>
+
+                    
+
+                    <div class="bg-slate-900 p-6 rounded-xl border border-cyan-500 shadow-lg">
+
+                        <label for="user-name" class="block text-cyan-300 mb-2 tech-font" data-lang-key="enter_name">
+
+                            İSMİNİ GİR:
+
+                        </label>
+
+                        <div class="flex flex-col sm:flex-row">
+
+                            <input 
+
+                                type="text" 
+
+                                id="user-name" 
+
+                                class="bg-slate-800 text-cyan-300 border border-cyan-500 rounded-lg sm:rounded-l-lg sm:rounded-r-none p-3 w-full focus:outline-none focus:ring-2 focus:ring-cyan-500 tech-font mb-2 sm:mb-0"
+
+                                placeholder="Adın ve Soyadın"
+
+                                data-lang-placeholder-key="name_placeholder"
+
+                            >
+
+                            <button 
+
+                                id="start-adventure" 
+
+                                class="bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg sm:rounded-r-lg sm:rounded-l-none px-4 py-3 sm:py-0 hover:from-cyan-600 hover:to-purple-600 transition-all tech-font flex items-center justify-center"
+
+                                data-lang-key="start_button"
+
+                            >
+
+                                BAŞLA
+
+                                <div class="sound-wave ml-2">
+
+                                    <span></span>
+
+                                    <span></span>
+
+                                    <span></span>
+
+                                    <span></span>
+
+                                    <span></span>
+
+                                </div>
+
+                            </button>
+
+                        </div>
+
+                        <p class="text-xs text-cyan-400 mt-2" data-lang-key="name_hint">* İsmin sertifikanda görünecek</p>
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-cyan-800">
+
+                        <div class="flex items-center mb-2">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V6.5A2.5 2.5 0 0 0 17.5 4h-11A2.5 2.5 0 0 0 4 6.5v13z"></path>
+
+                                <path d="M14 5l-4 4"></path>
+
+                                <path d="M10 5l4 4"></path>
+
+                            </svg>
+
+                            <h3 class="text-cyan-400 font-bold tech-font" data-lang-key="learn_title">ÖĞREN</h3>
+
+                        </div>
+
+                        <p class="text-cyan-200 text-sm" data-lang-key="learn_text">Yapay zeka hakkında eğlenceli hikayeler ve açıklamalarla yeni bilgiler öğren.</p>
+
+                    </div>
+
+                    
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-purple-800">
+
+                        <div class="flex items-center mb-2">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <circle cx="12" cy="12" r="10"></circle>
+
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+
+                                <path d="M2 12h20"></path>
+
+                            </svg>
+
+                            <h3 class="text-purple-400 font-bold tech-font" data-lang-key="explore_title">KEŞFET</h3>
+
+                        </div>
+
+                        <p class="text-purple-200 text-sm" data-lang-key="explore_text">Robotlar ve yapay zeka dünyasını interaktif kartlarla keşfet.</p>
+
+                    </div>
+
+                    
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-pink-800">
+
+                        <div class="flex items-center mb-2">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                <path d="M14.5 8a2.5 2.5 0 0 0-5 0v3.5a2.5 2.5 0 0 1-5 0V8a2.5 2.5 0 0 0-5 0"></path>
+
+                                <path d="M2 12h20"></path>
+
+                                <path d="M12 2v20"></path>
+
+                                <path d="M12 12h.01"></path>
+
+                            </svg>
+
+                            <h3 class="text-pink-400 font-bold tech-font" data-lang-key="certificate_title">SERTİFİKA</h3>
+
+                        </div>
+
+                        <p class="text-pink-200 text-sm" data-lang-key="certificate_text">Tüm kartları tamamla ve kendi özel yapay zeka sertifikanı kazan!</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+
+    <div id="game-screen" class="max-w-5xl mx-auto hidden">
+
+        <div class="bg-slate-800 bg-opacity-90 rounded-3xl p-6 md:p-8 shadow-xl tech-bg">
+
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+
+                <button id="btn-main-menu-game" class="btn-nav bg-slate-900 text-cyan-400 border border-cyan-700 rounded-lg px-4 py-2 font-medium shadow-sm hover:bg-slate-800 tech-font mb-4 md:mb-0">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+
+                    </svg>
+
+                    <span data-lang-key="main_menu_button">ANA MENÜ</span>
+
+                </button>
+
+                <div>
+
+                    <h1 class="tech-font text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400" data-lang-key="welcome_title">
+
+                        YAPAY ZEKA MACERASI
+
+                    </h1>
+
+                    <p class="text-cyan-300"><span data-lang-key="hello_explorer">Merhaba</span> <span id="user-name-display" class="font-bold text-white"></span><span data-lang-key="ready_to_explore">! Yapay zeka dünyasını keşfetmeye hazır mısın?</span></p>
+
+                </div>
+
+                <div class="mt-4 md:mt-0 flex items-center">
+
+                    <span class="bg-gradient-to-r from-cyan-900 to-purple-900 text-white py-2 px-4 rounded-full text-sm font-bold tech-font" data-lang-key="progress">
+
+                        İLERLEME: <span id="overall-progress-count">0</span>/<span id="overall-total-count">0</span>
+
+                    </span>
+
+                    <div class="ml-3 bg-yellow-900 text-yellow-300 py-1 px-3 rounded-full text-xs font-bold flex items-center tech-font">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+
+                        </svg>
+
+                        <span data-lang-key="child_friendly">ÇOCUK DOSTU</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="mb-6">
+
+                <div class="flex justify-between items-center mb-2">
+
+                    <span class="text-sm text-cyan-300 tech-font" data-lang-key="progress_bar_label">İLERLEME ÇUBUĞU</span>
+
+                    <span class="text-sm font-medium text-cyan-300 tech-font"><span id="progress-percent">0</span>%</span>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div class="progress" id="progress-bar" style="width: 0%"></div>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="grid grid-cols-1 gap-8">
+
+                <div class="card" id="current-card">
+
+                    <div class="card-inner">
+
+                        <div class="card-front">
+
+                            <div class="badge" id="card-badge"><span data-lang-key="concept">KAVRAM</span> #1</div>
+
+                            <div class="p-6 flex flex-col h-full">
+
+                                <h2 class="text-2xl font-bold mb-2 tech-font text-cyan-300" id="card-front-title"></h2>
+
+                                <div class="flex-grow overflow-auto pr-2">
+
+                                    <div id="card-front-svg" class="w-full h-48 flex items-center justify-center mb-4 floating">
+
+                                        </div>
+
+                                    <p id="card-front-text" class="text-cyan-100">
+
+                                        </p>
+
+                                </div>
+
+                                <p class="mt-4 text-center text-cyan-400 text-sm tech-font pulse" data-lang-key="flip_card_hint">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+
+                                        <path fill-rule="evenodd" d="M15.707 4.293a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-5-5a1 1 0 011.414-1.414L10 8.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+
+                                    </svg>
+
+                                    HİKAYEYİ OKUMAK İÇİN KARTI ÇEVİR
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-back">
